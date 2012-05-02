@@ -377,16 +377,3 @@ exports.ScopePathMap=ScopePathMap;
 
 
 
-
-
-
-
-// var tokens=esprima.parse(code, { tokens : true   }).tokens;
-
-// var tokensStr=JSON.stringify( tokens, adjustRegexLiteral, 4);
-// console.log(tokensStr);
-
-// var str = JSON.stringify(result, adjustRegexLiteral, 4);
-// console.log(str);
-
-

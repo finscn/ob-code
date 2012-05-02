@@ -85,33 +85,6 @@ buildscope(testFileIdx);
 
 
 
-// var start=Date.now();
-// var result = esprima.parse(code, options);
-// console.log("cost : "+(Date.now()-start) );
-
-// console.log( JSON.stringify(result, util.adjustRegexLiteral ,2 ) );
-
-
-// function getFileIdx(){
-//     return 0;
-// }
-//
-// var global=new ob.GlobalScope(result);
-// console.log("======================");
-// console.log(  JSON.stringify( global.variables,function(k,v){ return v},2) );
-// // console.log(  JSON.stringify( ob.Properties,function(k,v){ return v},2) );
-
-// // global.changePropertyName("qqq","eeeee");
-// // global.changeVarName("q","c");
-
-// console.log("======== output =========");
-// var indent="    ";
-// var outputCode = escodegen.generate(result, { indent: indent });
-// // console.log(outputCode );
-// // eval(outputCode)
-
-
-
 
 
 
