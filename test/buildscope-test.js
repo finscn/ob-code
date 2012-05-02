@@ -60,7 +60,8 @@ function buildscope( idx ){
 	var global=new ob.GlobalScope(result);
 	var end2=Date.now();
 
-global.obfuscate();
+// global.obfuscate();
+global.obfuscateChildren();
 
 console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
 console.log("##################");

@@ -171,6 +171,11 @@ BaseScope.prototype={
         });
 
     },
+    obfuscateChildren : function(){
+        this.childScopes.forEach(function(child){
+            child.obfuscate();
+        });
+    },
 
     obfuscate : function(){
         var cache=Object.create(null);
@@ -201,10 +206,7 @@ BaseScope.prototype={
         paramKeys.forEach(function(k){
             self.changeParamName(k, newNames[i++]);
         });
-
-        this.childScopes.forEach(function(child){
-            child.obfuscate();
-        });
+        this.obfuscateChildren();
 
     },
 
