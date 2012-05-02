@@ -8,6 +8,7 @@ if (typeof require!=="function"){
 
 var base=require("./base")||this,
     Syntax=base.Syntax,
+    ReservedWords=base.ReservedWords,
     util= base.util;
 
 
@@ -125,10 +126,24 @@ BaseScope.prototype={
         this.variables=Object.create(null);
         this.functions=Object.create(null);
 
-        this.childScopes=[];
+        this.usedIdentifier=Object.create(null);
         this.undefinedIdentifier=[];
+
+        this.childScopes=[];
         this.findDeclaration(node.body);
+
         var self=this;
+        this.usedIdentifier[self.name]=self.name;
+        for (var key in this.variables){
+            this.usedIdentifier[key]=key;
+        }
+        for (var key in this.functions){
+            this.usedIdentifier[key]=key;
+        }
+        this.undefinedIdentifier.forEach(function(u){
+             self.usedIdentifier[u.name]=u.name;
+        });
+        
         this.childScopes.forEach(function(child){
             var uList=child.undefinedIdentifier;
             uList.forEach(function(u,i){
@@ -152,6 +167,43 @@ BaseScope.prototype={
                     self.undefinedIdentifier.push(u);
                }
             });
+            child.undefinedIdentifier=[];
+        });
+
+    },
+
+    obfuscate : function(){
+        var cache=Object.create(null);
+        for (var key in this.usedIdentifier){
+            cache[key]=true;
+        }
+        ReservedWords.forEach(function(r){
+            cache[r]=true;
+        })
+
+        var self=this;
+        var varKeys=Object.keys(this.variables);
+        var funcKeys=Object.keys(this.functions);
+        var paramKeys=Object.keys(this.parameters||{});
+        
+
+        var count=varKeys.length+funcKeys.length+paramKeys.length;
+
+        var newNames=util.getRandomNames(count,cache);
+
+        var i=0;
+        varKeys.forEach(function(k){
+            self.changeVarName(k, newNames[i++]);
+        });
+        funcKeys.forEach(function(k){
+            self.changeFuncName(k, newNames[i++]);
+        });
+        paramKeys.forEach(function(k){
+            self.changeParamName(k, newNames[i++]);
+        });
+
+        this.childScopes.forEach(function(child){
+            child.obfuscate();
         });
 
     },
@@ -172,7 +224,7 @@ BaseScope.prototype={
                 v.name=newName;
             })
         }
-        if (this.parameters){
+        if (this.parameters && (oldName in this.parameters)){
             this.changeParamName(oldName, newName);
         }
     },
@@ -198,7 +250,9 @@ BaseScope.prototype={
                 v.name=newName;
             })
         }
-
+        if (this.parameters && (oldName in this.parameters)){
+            this.changeParamName(oldName, newName);
+        }
     },
 
     findDeclaration : function(node){
@@ -229,7 +283,7 @@ BaseScope.prototype={
 
 function GlobalScope(node){
 
-    this.name="Global";
+    this.name="/";
     this.type=node.type||Syntax.Program;
 
     this.path="/";

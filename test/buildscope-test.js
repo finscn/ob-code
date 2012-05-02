@@ -60,10 +60,16 @@ function buildscope( idx ){
 	var global=new ob.GlobalScope(result);
 	var end2=Date.now();
 
+global.obfuscate();
+
 console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
 console.log("##################");
 console.log( JSON.stringify( global, util.adjustRegexLiteral, 2) );
 console.log( JSON.stringify( ob.Properties, util.adjustRegexLiteral, 2) );
+
+code = escodegen.generate(result, { indent: "    " });
+console.log( code );
+
 
 	console.log("===== ob-code : "+fileName+" =====");
 	console.log( "esprima.parse cost time : "+ (end1-start) );
