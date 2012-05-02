@@ -34,6 +34,10 @@ var Hanlder={
             found=true;
             paramMap[name].push(node);
         }
+
+        if (!found && node.type==Syntax.Identifier){
+            self.undefinedIdentifier.push(node);
+        }
         return found;
     },
 
@@ -61,18 +65,51 @@ var Hanlder={
         return Hanlder.FunctionDeclaration.call(self, node);
     },
 
-
-    ObjectExpression : function(node){
-
-        },
-
     MemberExpression : function(node){
+        var self=this;
 
-        },
-
-    CatchClause : function(node){
-
+        var property=node.property;
+        var computed=node.computed;
+        if (computed){ // obj[key]
+            if (property.type== Syntax.Literal){
+                Hanlder._addProperty(property.value, property);
+           }          
+        }else{ // obj.key
+           if (property.type== Syntax.Identifier){
+                Hanlder._addProperty(property.name, property);
+           }
         }
+    },
+
+
+    // ObjectExpression : function(node){
+
+    // },
+
+    Property : function(node, computed){
+        var self=this;
+        var property=node.key;
+        if (property.type== Syntax.Identifier){
+            Hanlder._addProperty(property.name, property);
+        }else if(property.type== Syntax.Literal){
+            Hanlder._addProperty(property.value, property);
+        }
+    },
+
+    // CatchClause : function(node){
+
+    // },
+    
+    _addProperty : function(pname, property){
+        if (typeof pname =="string"){
+            if (!Array.isArray(Properties[pname])){
+                Properties[pname]=[];                            
+            }
+            var list=Properties[pname];
+            list.push(property)                         
+        }
+    }
+
 
 };
 
@@ -103,7 +140,7 @@ BaseScope.prototype={
                if (rs){
                     var m=null;
                     if ( Array.isArray(self.variables[u.name]) ){
-                        m=self.variables[u.name]
+                        m=self.variables[u.name];
                     }else if( Array.isArray(self.functions[u.name]) ){
                         m=self.functions[u.name];
                     }else if( Array.isArray(self.parameters[u.name]) ){
@@ -171,29 +208,16 @@ BaseScope.prototype={
                 self.findDeclaration(node[i]);
             }
         }else if (util.isObject(node)){
-            var rs;
             var handler=Hanlder[node.type];
             if (handler){
-                rs=handler.call(self, node, self);
-            }
-            if (node.type==Syntax.Identifier && rs===false){
-                this.undefinedIdentifier.push(node);
+                handler.call(self, node, self);
             }
             if ( this.isInCurrentScope(node) ){
                 for (var key in node){
-                    if (node.type==Syntax.MemberExpression && key=="property"
-                      || node.type==Syntax.Property && key=="key"
-                       ){
-                        var p=node[key];
-                        var pname=p.name||p.value;
-                        if (!Array.isArray(Properties[pname])){
-                            Properties[pname]=[];                            
-                        }
-                        var list=Properties[pname];
-                        list.push(p)
+                    if (node.type==Syntax.Property && key=="key"){
                         continue;
                     }
-                    self.findDeclaration(node[key]);
+                    self.findDeclaration( node[key] );                    
                 }
             }else{
 
@@ -212,6 +236,13 @@ function GlobalScope(node){
 
     this.build(node);
 
+    var self=this;
+    var uList=this.undefinedIdentifier;
+    uList.forEach(function(u,i){
+        self.variables[u.name]=self.variables[u.name]||[];
+        self.variables[u.name].push(u);
+    });
+    this.undefinedIdentifier=[];
 }
 
 util.merger(GlobalScope.prototype, BaseScope.prototype);
