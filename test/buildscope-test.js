@@ -29,12 +29,12 @@ var testFiles=[
 var testcase="./testcase";
 
 
-var filePath=process.argv[2]|| './testcase/'+testFiles[ getFileIdx()];
+function buildscope( idx ){
+	
+	var filePath=testcase+"/"+testFiles[idx||0];
 
-
-var code = fs.readFileSync(filePath, "UTF-8");
-
-var options = {
+	var code = fs.readFileSync(filePath, "UTF-8");
+	var options = {
             raw : !true,
             // ,
             // tokens  : !true,
@@ -44,59 +44,50 @@ var options = {
             // range : !true
         };
 
-var start=Date.now();
-var result = esprima.parse(code, options);
-console.log("cost : "+(Date.now()-start) );
-
-console.log( JSON.stringify(result, util.adjustRegexLiteral ,2 ) );
-
-
-function getFileIdx(){
-    return 0;
-}
-
-var global=new ob.GlobalScope(result);
-console.log("======================");
-console.log(  JSON.stringify( global.variables,function(k,v){ return v},2) );
-// console.log(  JSON.stringify( ob.Properties,function(k,v){ return v},2) );
-
-// global.changePropertyName("qqq","eeeee");
-// global.changeVarName("q","c");
-
-console.log("======== output =========");
-var indent="    ";
-var outputCode = escodegen.generate(result, { indent: indent });
-// console.log(outputCode );
-// eval(outputCode)
-
-
-
-function buildscope( idx ){
-	
-	var filePath=testcase+"/"+testFiles[idx||0];
-
-	var code = fs.readFileSync(filePath, "UTF-8");
-
-	var count=0;
 	var start=Date.now();
-	var parser = new Parser();
-	var lastToken;
-	var tree ;
-	try{
-		tree= parser.parse(code ,function(token){
-			count++;
-			lastToken=token;
-		});
-	}catch(e){
-		console.log(count, lastToken);
-		throw e;
-	}
-	var end=Date.now();
-	console.log( "token count : "+count);
-	console.log( "time cost : "+ (end-start) );
+	var result = esprima.parse(code, options);
+	var end1=Date.now();
+	var global=new ob.GlobalScope(result);
+	var end2=Date.now();
+	console.log( "esprima.parse cost time : "+ (end1-start) );
+	console.log( "ob-code cost time : "+ (end2-end1) );
 
 	return tree;
 }
+
+var testFileIdx= process.argv[2]||0;
+buildscope(testFileIdx);
+
+
+
+// var start=Date.now();
+// var result = esprima.parse(code, options);
+// console.log("cost : "+(Date.now()-start) );
+
+// console.log( JSON.stringify(result, util.adjustRegexLiteral ,2 ) );
+
+
+// function getFileIdx(){
+//     return 0;
+// }
+//
+// var global=new ob.GlobalScope(result);
+// console.log("======================");
+// console.log(  JSON.stringify( global.variables,function(k,v){ return v},2) );
+// // console.log(  JSON.stringify( ob.Properties,function(k,v){ return v},2) );
+
+// // global.changePropertyName("qqq","eeeee");
+// // global.changeVarName("q","c");
+
+// console.log("======== output =========");
+// var indent="    ";
+// var outputCode = escodegen.generate(result, { indent: indent });
+// // console.log(outputCode );
+// // eval(outputCode)
+
+
+
+
 
 
 
