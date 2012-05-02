@@ -30,8 +30,18 @@ var testcase="./testcase";
 
 
 function buildscope( idx ){
-	
-	var filePath=testcase+"/"+testFiles[idx||0];
+	var fileName=testFiles[idx||0];
+	if (!fileName){
+		if (idx=="all"){
+			testFiles.forEach(function(f,i){
+				buildscope(i);
+			});
+			return;		
+		}else{
+			return buildscope(0);
+		}		
+	}
+	var filePath=testcase+"/"+fileName;
 
 	var code = fs.readFileSync(filePath, "UTF-8");
 	var options = {
@@ -49,6 +59,7 @@ function buildscope( idx ){
 	var end1=Date.now();
 	var global=new ob.GlobalScope(result);
 	var end2=Date.now();
+	console.log("===== ob-code : "+fileName+" =====");
 	console.log( "esprima.parse cost time : "+ (end1-start) );
 	console.log( "ob-code cost time : "+ (end2-end1) );
 
