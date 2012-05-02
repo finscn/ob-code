@@ -52,7 +52,7 @@ function buildscope( idx ){
 	console.log( "esprima.parse cost time : "+ (end1-start) );
 	console.log( "ob-code cost time : "+ (end2-end1) );
 
-	return tree;
+	return result;
 }
 
 var testFileIdx= process.argv[2]||0;
