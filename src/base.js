@@ -33,6 +33,7 @@ var ReservedWords=[
     'if','in','do',
     'var','for','new','try',
     'this','else','case','void','with',
+    'while','break','catch','throw',
     'return','typeof','delete','switch',
     'default','finally',
     'function','continue','debugger',
