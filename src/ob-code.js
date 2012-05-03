@@ -17,6 +17,10 @@ var Hanlder={
         var self=this;
         var name=node.name;
 
+        if (node._ignore_){
+            return true;
+        }
+
         var paramMap=self.parameters,
             varMap=self.variables,
             funMap=self.functions;
@@ -61,6 +65,12 @@ var Hanlder={
         self.functions[functionScope.name]=node.id?[node.id]:[];
     },
 
+
+    CatchClause : function(node){
+        var self=this;
+        var catchScope=new CatchScope(node, self);
+    },
+
     FunctionExpression : function(node){
         var self=this;
         return Hanlder.FunctionDeclaration.call(self, node);
@@ -97,9 +107,6 @@ var Hanlder={
         }
     },
 
-    // CatchClause : function(node){
-
-    // },
     
     _addProperty : function(pname, property){
         if (typeof pname =="string"){
@@ -122,7 +129,7 @@ function BaseScope(node, parent){ }
 BaseScope.prototype={
     constructor : BaseScope,
 
-    build : function(node){
+    init : function(){
         this.variables=Object.create(null);
         this.functions=Object.create(null);
 
@@ -130,6 +137,11 @@ BaseScope.prototype={
         this.undefinedIdentifier=[];
 
         this.childScopes=[];
+
+    },
+
+    build : function(node){
+
         this.findDeclaration(node.body);
 
         var self=this;
@@ -144,7 +156,11 @@ BaseScope.prototype={
              self.usedIdentifier[u.name]=u.name;
         });
         
+        
         this.childScopes.forEach(function(child){
+            if (child.type==Syntax.CatchClause){
+                return;
+            }
             var uList=child.undefinedIdentifier;
             uList.forEach(function(u,i){
                var rs=Hanlder.Identifier.call(self, u);
@@ -213,7 +229,8 @@ BaseScope.prototype={
     isInCurrentScope : function(node){
         return node.type!=Syntax.FunctionDeclaration
                 && node.type!=Syntax.FunctionExpression
-                && node.type!=Syntax.CatchClause ;
+                && node.type!=Syntax.CatchClause 
+                ;
     },
 
     changeVarName : function(oldName, newName){
@@ -268,6 +285,7 @@ BaseScope.prototype={
             if (handler){
                 handler.call(self, node, self);
             }
+
             if ( this.isInCurrentScope(node) ){
                 for (var key in node){
                     if (node.type==Syntax.Property && key=="key"){
@@ -289,6 +307,8 @@ function GlobalScope(node){
     this.type=node.type||Syntax.Program;
 
     this.path="/";
+
+    this.init();
 
     this.build(node);
 
@@ -324,7 +344,9 @@ function FunctionScope(node,parent){
     }else{
         this.name=id.name; 
     }
-   
+    
+    this.init();
+
     if (parent){
        this.index=parent.childScopes.length;
        parent.childScopes.push( this );
@@ -339,6 +361,8 @@ function FunctionScope(node,parent){
     }
     // this.parent=parent||null;
     
+    
+
     this.parameters=Object.create(null);
     if (node.params){
 
@@ -346,6 +370,7 @@ function FunctionScope(node,parent){
     }
 
     this.build(node);
+
 
 }
 util.merger(FunctionScope.prototype, BaseScope.prototype);
@@ -361,6 +386,62 @@ util.merger(FunctionScope.prototype , {
                 var name=p.name;
                 this.parameters[name]=[p];
             }
+        }
+    }
+
+});
+
+function CatchScope(node , parent){
+
+
+    this.type=node.type;
+
+    this.paramName=node.param.name;
+    node.param._ignore_=true;
+
+    this.init();
+    
+    this.variables[this.paramName]=[
+            node.param
+        ];
+
+    this.findIdentifier(node.body);
+
+    parent.childScopes.push( this );
+    BaseScope.prototype.build.call(parent, node);
+
+}
+
+util.merger(CatchScope.prototype, BaseScope.prototype);
+
+util.merger(CatchScope.prototype , {
+
+    constructor : CatchScope ,
+
+    findIdentifier : function(node){
+        var self=this;
+        if (Array.isArray(node)){
+            for (var i=0,len=node.length;i<len;i++){
+                self.findIdentifier(node[i]);
+            }
+        }else if (util.isObject(node)){
+            
+            if (node.type==Syntax.Identifier && node.name==self.paramName){
+                var name=node.name;
+                var m=this.variables[name]=this.variables[name]||[];
+                m.push(node);
+                node._ignore_=true;
+            }else{
+                if ( this.isInCurrentScope(node) ){
+                    for (var key in node){
+                        if (node.type==Syntax.Property && key=="key"){
+                            continue;
+                        }
+                        self.findIdentifier( node[key] );                    
+                    }
+                }
+            }
+
         }
     }
 
