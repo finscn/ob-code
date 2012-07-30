@@ -1,4 +1,8 @@
 
+var esprima=require("../parser/esprima"),
+    escodegen=require("../parser/escodegen");
+
+
 ;(function (exports) {
 
 if (typeof require!=="function"){
@@ -7,9 +11,17 @@ if (typeof require!=="function"){
 
 
 var base=require("./base")||this,
-    Syntax=base.Syntax,
-    ReservedWords=base.ReservedWords,
+    Reserved=require("./Reserved"),
     util= base.util;
+
+
+var Syntax = { Anonymous : "(Anonymous)" };
+
+for (var key in esprima.Syntax){
+    Syntax[key]=esprima.Syntax[key];
+}
+    
+
 
 
 var Hanlder={
@@ -198,7 +210,7 @@ BaseScope.prototype={
         for (var key in this.usedIdentifier){
             cache[key]=true;
         }
-        ReservedWords.forEach(function(r){
+        Reserved.words.forEach(function(r){
             cache[r]=true;
         })
 
@@ -211,7 +223,7 @@ BaseScope.prototype={
         var count=varKeys.length+funcKeys.length+paramKeys.length;
 
         var newNames=util.getRandomNames(count,cache);
-
+console.log(newNames)
         var i=0;
         varKeys.forEach(function(k){
             self.changeVarName(k, newNames[i++]);

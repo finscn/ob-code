@@ -19,11 +19,11 @@ ob.ScopePathMap;
 
 var testFiles=[
     'my-code.js',
-    'backbone-0.5.3.js',
-    'mootools-1.4.1.js',
-    'prototype-1.7.0.0.js',
-    'jquery-1.7.1.js',
-    'ext-core-3.1.0.js'
+    // 'backbone-0.5.3.js',
+    // 'mootools-1.4.1.js',
+    // 'prototype-1.7.0.0.js',
+    // 'jquery-1.7.1.js',
+    // 'ext-core-3.1.0.js'
 ];
 
 var testcase="./testcase";
@@ -56,14 +56,15 @@ function buildscope( idx ){
 
 	var start=Date.now();
 	var result = esprima.parse(code, options);
+
 	var end1=Date.now();
 	var global=new ob.GlobalScope(result);
 	var end2=Date.now();
 
 // global.obfuscate();
-global.obfuscateChildren();
 
-// console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
+global.obfuscateChildren();
+console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
 console.log("##################");
 console.log( JSON.stringify( global, util.adjustRegexLiteral, 2) );
 // console.log( JSON.stringify( ob.Properties, util.adjustRegexLiteral, 2) );

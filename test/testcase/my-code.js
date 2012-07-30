@@ -1,21 +1,8 @@
+var a=111;
+var b=222;
 
-var a=123;
-
-function foo( b,c,d){
-
-try{
-	z=1;
-}catch(e){
-	z=2;
-	e++;
-	z=e+33;
-	var cc=1;
-}
-cc=2;
-
-var e=a+b;
-b=c+d;
-d=123;
-a++;
+function foo(a ,b, c, d) {
+	var t=/qwe/igm;
+	return a+b+c+d;
 
 }
