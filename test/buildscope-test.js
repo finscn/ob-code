@@ -63,11 +63,12 @@ function buildscope( idx ){
 
 // global.obfuscate();
 
-global.obfuscateChildren();
 console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
+global.obfuscateChildren();
+global.obfuscateProperties(ob.Properties, {property : {"qwe" : true} });
 console.log("##################");
 console.log( JSON.stringify( global, util.adjustRegexLiteral, 2) );
-// console.log( JSON.stringify( ob.Properties, util.adjustRegexLiteral, 2) );
+console.log( JSON.stringify( ob.Properties, util.adjustRegexLiteral, 2) );
 
 code = escodegen.generate(result, { indent: "    " });
 console.log( code );

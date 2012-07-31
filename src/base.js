@@ -42,11 +42,10 @@ var _util={
     stringShuffle : function (str){
         return util.arrayShuffle(str.split("")).join("");
     },
-    getRandomVarName : function(){
 
-    },
-    getRandomWord : function(len, seed){
-        var word=[];
+    getRandomWord : function(len, seed,word){
+        word=word||[];
+        len=len-word.length;
         for (var i=0;i<len;i++){
             var idx= util.getRandom(0,seed.length-1);
             word.push(seed[idx]);
@@ -54,28 +53,31 @@ var _util={
         return word.join("");
     },
 
-    getRandomNames : function(count, cache){
+    getRandomNames : function(count, cache ,reserved){
         var number="0123456789";
         var letter="abcdefghijklmnopqrstuvwxyz";
         letter+=letter.toUpperCase();
         var firstSeed="$_"+letter;
         var seed=firstSeed+number;
 
+        reserved=reserved||{};
 
         cache=cache||{};
 
+        var firstEnd=firstSeed.length-1;
         var len=1;
         var list=[];
         var tried=0;
         while(count){
-            var name= util.getRandomWord(len, len<2?firstSeed:seed);
+            var word=[ firstSeed[util.getRandom(0,firstEnd)] ]
+            var name= util.getRandomWord(len,seed,word);
             tried++;
-            if (!cache[name]){
+            if (!cache[name] && !reserved[name]){
                 list.push(name);
                 cache[name]=true;
                 count--;
             }else{
-                if ( len<2&&tried>firstSeed || tried>1000){
+                if ( tried>1000){
                     len++;
                     tried=0;
                 }
@@ -83,9 +85,10 @@ var _util={
 
         }
         return list;
-
     },	
+    getRandomVarName : function(){
 
+    },
 
 	adjustRegexLiteral : function (key, value) {
 	    if (key === 'value' && value instanceof RegExp) {

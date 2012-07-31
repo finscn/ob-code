@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+
+<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+
+<title> Dom Property </title>
+
+<style type="text/css">
+
+
+</style>
+
+
+
+
+<script>
+
+(function(){
+
+	function $id(id){
+		return document.getElementById(id);
+	}
+
+	var plist;
+	function start(event){
+		
+		var pmap={};
+		var pool=$id("ui-pool");
+		parseNode(pool,pmap);
+
+		parseNode(event,pmap);
+
+		parseNode({
+			"ontouchstart" : "Event",
+			"ontouchmove" : "Event",
+			"ontouchend" : "Event",
+			"ontouchcancel" : "Event",
+			"touches" : "EventProperty",
+			"changedTouches" : "EventProperty",
+			"targetTouches" : "EventProperty",
+		},pmap);
+
+		parseNode({
+			"orientationchange" : "Event",
+			"orientation" : "window",
+			"ondevicemotion" : "Event",
+			"acceleration" : "EventProperty",
+			"rotationRate" : "EventProperty",
+			"accelerationIncludingGravity" : "EventProperty",
+			"beta" : "EventProperty",
+			"gamma" : "EventProperty",
+			"alpha" : "EventProperty",
+		},pmap);
+
+		parseNode(window,pmap);
+		parseNode(window.document,pmap);
+		parseNode(window.navigator,pmap);
+		parseNode(window.navigator.geolocation,pmap);
+		parseNode(window.location,pmap);
+
+
+		parseNode(window.XMLHttpRequest,pmap);
+		parseNode(window.Worker,pmap);
+		parseNode(window.WebSocket,pmap);
+		parseNode(window.Float32Array,pmap);
+
+		parseNode(document.createElement("canvas").getContext("2d"),pmap);
+		// parseNode(window.localStorage,api);
+
+		plist=Object.keys(pmap)
+		plist.sort(function(a,b){
+			var _a=a.toLowerCase();
+			var _b=b.toLowerCase();
+			return _a<_b?-1:1;
+		});
+		console.log(plist.length);
+
+		var str= '[\n\"'+ plist.join('",\n"')+'"\n]'//JSON.stringify(plist);
+		// console.log(str);
+
+		$id("output").value=str
+	}
+
+	function excludeClass(item){
+		return item.indexOf("HTML")==0 
+				|| item.indexOf("SVG")==0 
+				|| item.indexOf("WebGL")==0 
+				|| item.indexOf("WebKit")==0 
+				|| item.indexOf("CSS")==0 
+				|| item.indexOf("DOM")==0 
+
+	}
+	function parseNode(node,plist){
+
+		if (node.prototype){
+			parseNode(node.prototype,plist)
+		}
+		if (node.style){
+			parseNode(node.style,plist)
+		}
+		if (node.childNodes){
+			for (var i=0;i<node.childNodes.length;i++){
+				parseNode(node.childNodes[i],plist)
+			}
+		}
+
+		var names=Object.getOwnPropertyNames(node);
+		var keys=Object.keys(node);
+		var ps=[];
+		for (var p in node){
+			ps.push(p);
+		}
+
+		var _pmap={};
+		names.forEach(function(item){
+			if (excludeClass(item)){
+				return;
+			}
+			plist[item]="names";
+			_pmap[item]="names";
+		});		
+		keys.forEach(function(item){
+			if (excludeClass(item)){
+				return;
+			}
+			plist[item]="keys";
+			_pmap[item]="keys";
+		});
+		ps.forEach(function(item){
+			if (excludeClass(item)){
+				return;
+			}
+			plist[item]="ps";
+			_pmap[item]="ps";
+		});
+
+		if (node==window){	
+			for (var item in _pmap){
+				if ( item!="Window"
+					&& item.charCodeAt(0)<97
+					&& typeof node[item]=="function"){
+					var proto=node[item].prototype;
+					if (proto){
+						var protoList=Object.getOwnPropertyNames(proto);
+						protoList.forEach( function(_p){
+							plist[_p]="ps";
+						})		
+					}
+				}
+			}
+		}
+
+
+		// console.log( names.length+keys.length+ps.length )
+		// console.log( Object.keys(plist).length )
+	}
+
+	window.addEventListener("load" , function(event) {
+		start(event);
+	});
+
+}())
+
+
+</script>
+
+</head>
+<body>
+
+<textarea id="output" rows="30" cols="60"></textarea>
+
+
+<div id="ui-pool" style="display: none">
+	<canvas></canvas>
+	<audio></audio>
+	<video></video>
+	<div></div>
+	<span></span>
+	<img></img>
+	<a></a>
+	<form></form>
+	<button></button>
+	<input type="text"/>
+	<input type="password"/>
+	<input type="checkbox"/>
+	<input type="radio"/>
+	<input type="button"/>
+	<input type="file"/>
+	<textarea></textarea>
+	<select ><option>123</option></select>
+	<ul ><li></li></ul>
+</div>
+
+</body>
+
+</html>

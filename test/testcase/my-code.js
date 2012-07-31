@@ -1,8 +1,13 @@
-var a=111;
-var b=222;
 
-function foo(a ,b, c, d) {
-	var t=/qwe/igm;
-	return a+b+c+d;
+
+function foo() {
+
+	var a={
+		style : 1
+	}
+
+	var style=2;
+	a.style=2;
+	a[style]=3
 
 }
