@@ -114,10 +114,9 @@
 		}
 
 		var names=Object.getOwnPropertyNames(node);
-		var keys=Object.keys(node);
-		var ps=[];
+		var keys=[];
 		for (var p in node){
-			ps.push(p);
+			keys.push(p);
 		}
 
 		var _pmap={};
@@ -135,13 +134,7 @@
 			plist[item]="keys";
 			_pmap[item]="keys";
 		});
-		ps.forEach(function(item){
-			if (excludeClass(item)){
-				return;
-			}
-			plist[item]="ps";
-			_pmap[item]="ps";
-		});
+
 
 		if (node==window){	
 			for (var item in _pmap){
@@ -152,7 +145,7 @@
 					if (proto){
 						var protoList=Object.getOwnPropertyNames(proto);
 						protoList.forEach( function(_p){
-							plist[_p]="ps";
+							plist[_p]="names";
 						})		
 					}
 				}
