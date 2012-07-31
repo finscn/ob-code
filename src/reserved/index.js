@@ -10,7 +10,7 @@ var lists={
 
 module.exports = {};
 
-var allMap={};
+var allMap=Object.create(null);
 for (var key in lists){
 	var o=module.exports[key]={};
 	lists[key].forEach(function(item){

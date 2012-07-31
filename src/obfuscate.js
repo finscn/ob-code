@@ -35,8 +35,12 @@ function start() {
 
 
 
+
 	globalScope.obfuscateChildren();
-	globalScope.obfuscateProperties(ob.Properties);
+
+	var literals=globalScope.findStringLiteral(result);
+	var rp= globalScope.obfuscateProperties(ob.Properties,literals, config.blackListStr );
+
 
 	var code = escodegen.generate(result, {
 		indent: "	"
@@ -48,6 +52,19 @@ function start() {
 		console.log(code);
 	}
 
+	if (outFile) {	
+		var mapping=[];
+
+		mapping.push("[VAR-MAPPING]");
+		for (var oldName in ob.VarMapping){
+			mapping.push(oldName+"="+ob.VarMapping[oldName])
+		}
+		mapping.push("\n\n[PROPERTY-MAPPING]");
+		for (var oldName in ob.PropertyMapping){
+			mapping.push(oldName+"="+ob.PropertyMapping[oldName])
+		}
+		var rs = writeFile(config.baseDir + "/" + outFile+".mapping", mapping.join("\n"), encode);
+	}
 }
 
 function writeFile(filePath, content, encode) {
@@ -60,12 +77,13 @@ function parseConfigFile(filePath, encode) {
 	var dir = path.dirname(filePath);
 	config.baseDir = path.normalize(dir);
 
-	config.whiteList = {};
-	config.whiteListV = {};
-	config.whiteListP = {};
-	config.blackList = {};
-	config.blackListV = {};
-	config.blackListP = {};
+	config.whiteList = Object.create(null);
+	config.whiteListV = Object.create(null);
+	config.whiteListP = Object.create(null);
+	config.blackList = Object.create(null);
+	config.blackListV = Object.create(null);
+	config.blackListP = Object.create(null);
+	config.blackListStr = Object.create(null);
 
 	var code = fs.readFileSync(filePath, encode);
 	code = code.trim();
@@ -102,6 +120,9 @@ function parseConfigFile(filePath, encode) {
 			} else if (line == "[BLACK-LIST:PROPERTY]") {
 				current = 7;
 
+			} else if (line == "[BLACK-LIST:STRING]") {
+				current = 8;
+
 			} else if (line) {
 
 				if (current == 1) {
@@ -120,6 +141,8 @@ function parseConfigFile(filePath, encode) {
 					config.blackListV[line] = true;
 				} else if (current == 7) {
 					config.blackListP[line] = true;
+				} else if (current == 8) {
+					config.blackListStr[line] = true;
 				}
 			}
 		})

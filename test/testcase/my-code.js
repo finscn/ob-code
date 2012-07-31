@@ -1,13 +1,7 @@
 
 
-function foo() {
-
-	var a={
-		style : 1
-	}
-
-	var style=2;
-	a.style=2;
-	a[style]=3
-
+var obj={
+	'a' : 1 ,
+	b : 2
 }
+obj.c=3;

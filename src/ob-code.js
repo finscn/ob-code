@@ -22,7 +22,7 @@ for (var key in esprima.Syntax){
     
 
 
-var Config={};
+var Config=Object.create(null);
 
 
 var Hanlder={
@@ -147,7 +147,9 @@ var Hanlder={
 };
 
 var Properties=Object.create(null);
-var ScopePathMap={};
+var StringLiteral=Object.create(null);
+
+var ScopePathMap=Object.create(null);
 
 function BaseScope(node, parent){ }
 
@@ -217,7 +219,7 @@ BaseScope.prototype={
     },
     obfuscateChildren : function(cache){
         this.childScopes.forEach(function(child){
-            var _cache={};
+            var _cache=Object.create(null);
             util.merger(_cache, cache);
             child.obfuscate(_cache);
         });
@@ -232,11 +234,11 @@ BaseScope.prototype={
         var self=this;
         var varKeys=Object.keys(this.variables);
         var funcKeys=Object.keys(this.functions);
-        var paramKeys=Object.keys(this.parameters||{});
+        var paramKeys=Object.keys(this.parameters||Object.create(null));
         
         var count=varKeys.length+funcKeys.length+paramKeys.length;
 
-        var reserved={};
+        var reserved=Object.create(null);
         for (var p in Reserved.keyword){
             reserved[p]=true;
         }
@@ -264,17 +266,23 @@ BaseScope.prototype={
         var i=0;
         varKeys.forEach(function(k){
             if (!reserved[k]){
-                self.changeVarName(k, newNames[i++]);
+                VarMapping[k]=newNames[i];
+                self.changeVarName(k, newNames[i]);
+                i++;
             }
         });
         funcKeys.forEach(function(k){
-            if (!reserved[k]){
-                self.changeFuncName(k, newNames[i++]);
+            if (!reserved[k] && k.indexOf("(")!=0 ){
+                VarMapping[k]=newNames[i];
+                self.changeFuncName(k, newNames[i]);
+                i++;
             }
         });
         paramKeys.forEach(function(k){
              if (!reserved[k]){
-                self.changeParamName(k, newNames[i++]);
+                VarMapping[k]=newNames[i];
+                self.changeParamName(k, newNames[i]);
+                i++;
             }
         });
         this.obfuscateChildren(cache);
@@ -330,6 +338,25 @@ BaseScope.prototype={
         }
     },
 
+    findStringLiteral : function(node, literals){
+        literals=literals||Object.create(null);
+        if (Array.isArray(node)){
+            for (var i=0,len=node.length;i<len;i++){
+                this.findStringLiteral(node[i],literals);
+            }
+        }else if (util.isObject(node)){
+            if (node.type==Syntax.Literal && typeof node.value =="string"){
+                var value=node.value;
+                literals[value]=literals[value]||[];
+                literals[value].push(node);
+            }
+            for (var key in node){
+                this.findStringLiteral( node[key],literals );                    
+            }
+        }
+        return literals;
+    },
+
     findDeclaration : function(node){
         var self=this;
         if (Array.isArray(node)){
@@ -379,7 +406,8 @@ BaseScope.prototype={
     }
 }
 
-
+var VarMapping=Object.create(null)
+var PropertyMapping=Object.create(null)
 function GlobalScope(node , config){
 
     this.name="/";
@@ -405,13 +433,18 @@ function GlobalScope(node , config){
 util.merger(GlobalScope.prototype, BaseScope.prototype);
 util.merger(GlobalScope.prototype , {
     constructor : GlobalScope ,
-    obfuscateProperties : function(properties){
+    obfuscateProperties : function(properties, literals, blackListStr){
         var properKeys=Object.keys(properties);
         var self=this;
         var count=properKeys.length;
-        var cache={};
+        var cache=Object.create(null);
 
-        var reserved={};
+        literals=literals||Object.create(null);
+        blackListStr=blackListStr||Object.create(null);
+
+        var reservedProperties=Object.create(null);
+
+        var reserved=Object.create(null);
         for (var p in Reserved.keyword){
             reserved[p]=true;
         }
@@ -439,23 +472,46 @@ util.merger(GlobalScope.prototype , {
 
 
         var newNames=util.getRandomNames(count, cache, reserved);
+
         properKeys.forEach(function(k,idx){
-            if (!reserved[k]){
+
+            if(blackListStr[k]){
+                var newName=util.getRandomNames(1, cache, reserved)[0];
+                self.changePropertyName(properties,k, newName);
+                self.changeLiteralValue(literals,k,newName);
+            }else if (!reserved[k]){
+                PropertyMapping[k]=newNames[idx];
                 self.changePropertyName(properties,k, newNames[idx]);
+            }else {
+                reservedProperties[k]=properties[k];
             }
         });
+
+        return reservedProperties;
     },
 
     changePropertyName : function(properties,oldName,newName){
-            var list=properties[oldName];
-            delete properties[oldName];
-            if (list){
-                properties[newName]=list;
-                list.forEach(function(v){
-                    v.name=newName;
-                })
-            }
-    }
+        var list=properties[oldName];
+        delete properties[oldName];
+        if (list){
+            properties[newName]=list;
+            list.forEach(function(v){
+                v.name=newName;
+            })
+        }
+    },
+
+    changeLiteralValue : function(literals,oldValue,newValue){
+        var list=literals[oldValue];
+        delete literals[oldValue];
+        if (list){
+            literals[newValue]=list;
+            list.forEach(function(v){
+                v.value=newValue;
+            })
+        }
+    },
+
 });
 
 function FunctionScope(node,parent){
@@ -575,6 +631,8 @@ exports.GlobalScope=GlobalScope;
 exports.FunctionScope=FunctionScope;
 exports.Properties=Properties;
 exports.ScopePathMap=ScopePathMap;
+exports.VarMapping=VarMapping;
+exports.PropertyMapping=PropertyMapping;
 
 
 }(typeof exports === 'undefined' ? (GT = {}) : exports));
