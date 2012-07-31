@@ -18,6 +18,7 @@ function start() {
 		console.error("argv is wrong.");
 		return;
 	}
+
 	var configFile = argv[0];
 	var outFile = argv[1];
 	var encode = argv[2] || "UTF-8";
@@ -87,8 +88,11 @@ function parseConfigFile(filePath, encode) {
 
 	var code = fs.readFileSync(filePath, encode);
 	code = code.trim();
+
+		var pcode="\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
+
 	if (filePath.lastIndexOf(".js") == filePath.length - 3) {
-		config.code = code;
+		config.code = code+pcode;
 	} else {
 		var lines = code.split("\n");
 
@@ -129,6 +133,10 @@ function parseConfigFile(filePath, encode) {
 					var file = path.normalize(config.baseDir + "/" + line);
 					var code = fs.readFileSync(file, encode);
 					codes.push(code.trim());
+					if (Math.random()<0.8){
+						codes.push(pcode);
+						pcode=""
+					}
 				} else if (current == 2) {
 					config.whiteList[line] = true;
 				} else if (current == 3) {
@@ -146,7 +154,7 @@ function parseConfigFile(filePath, encode) {
 				}
 			}
 		})
-
+		codes.push(pcode);
 		config.code = codes.join("\n;\n");
 	}
 

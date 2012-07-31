@@ -68,6 +68,7 @@ var _util={
         var len=1;
         var list=[];
         var tried=0;
+        var maxTry=Math.pow(seed.length,len);
         while(count){
             var word=[ firstSeed[util.getRandom(0,firstEnd)] ]
             var name= util.getRandomWord(len,seed,word);
@@ -77,8 +78,9 @@ var _util={
                 cache[name]=true;
                 count--;
             }else{
-                if ( tried>1000){
+                if ( tried>maxTry+1){
                     len++;
+                    maxTry=Math.pow(seed.length,len);
                     tried=0;
                 }
             }
