@@ -19,9 +19,11 @@ function start() {
 		return;
 	}
 
+	var compact=argv[argv.length-1]=="-c" || argv[argv.length-1]=="-C";
 	var configFile = argv[0];
 	var outFile = argv[1];
-	var encode = argv[2] || "UTF-8";
+	var encode=!argv[2] || argv.length==3 && compact ?"UTF-8":argv[2];
+
 
 	var config = parseConfigFile(configFile, encode);
 
@@ -50,7 +52,7 @@ function start() {
         hexadecimal: false,
         quotes: 'single',
         escapeless: false,
-        compact: false,
+        compact: compact, //false,
         parentheses: true,
         semicolons: true
     },
@@ -96,6 +98,9 @@ function parseConfigFile(filePath, encode) {
 	config.blackListV = Object.create(null);
 	config.blackListP = Object.create(null);
 	config.blackListStr = Object.create(null);
+	config.reservedList = Object.create(null);
+	config.reservedListV = Object.create(null);
+	config.reservedListP = Object.create(null);
 
 	var code = fs.readFileSync(filePath, encode);
 	code = code.trim();
@@ -114,33 +119,43 @@ function parseConfigFile(filePath, encode) {
 		lines.forEach(function(line) {
 			line = line.trim();
 			if (line == "[JS-FILE]") {
-				current = 1;
+				current = "code";
 			}else if (line == "[JS-WRAPP=true]") {
 				config.jsWrapp = true;
 
 			} else if (line == "[WHITE-LIST]") {
-				current = 2;
+				current = "whiteList";
 
 			} else if (line == "[WHITE-LIST:VAR]") {
-				current = 3;
+				current = "whiteListV";
 
 			} else if (line == "[WHITE-LIST:PROPERTY]") {
-				current = 4;
+				current = "whiteListP";
 
 			} else if (line == "[BLACK-LIST]") {
-				current = 5;
+				current = "blackList";
+
 			} else if (line == "[BLACK-LIST:VAR]") {
-				current = 6;
+				current = "blackListV";
 
 			} else if (line == "[BLACK-LIST:PROPERTY]") {
-				current = 7;
+				current = "blackListP";
 
 			} else if (line == "[BLACK-LIST:STRING]") {
-				current = 8;
+				current = "blackListStr";
+
+			} else if (line == "[RESERVED]") {
+				current = "reservedList";
+
+			} else if (line == "[RESERVED:VAR]") {
+				current = "reservedListV";
+
+			} else if (line == "[RESERVED:PROPERTY]") {
+				current = "reservedListP";
 
 			} else if (line) {
 
-				if (current == 1) {
+				if (current == "code") {
 					var file = path.normalize(config.baseDir + "/" + line);
 					var code = fs.readFileSync(file, encode);
 					codes.push(code.trim());
@@ -148,20 +163,8 @@ function parseConfigFile(filePath, encode) {
 						codes.push(pcode);
 						pcode=""
 					}
-				} else if (current == 2) {
-					config.whiteList[line] = true;
-				} else if (current == 3) {
-					config.whiteListV[line] = true;
-				} else if (current == 4) {
-					config.whiteListP[line] = true;
-				} else if (current == 5) {
-					config.blackList[line] = true;
-				} else if (current == 6) {
-					config.blackListV[line] = true;
-				} else if (current == 7) {
-					config.blackListP[line] = true;
-				} else if (current == 8) {
-					config.blackListStr[line] = true;
+				} else if (current) {
+					config[current][line] = true;
 				}
 			}
 		})

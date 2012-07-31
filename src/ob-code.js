@@ -298,6 +298,12 @@ BaseScope.prototype={
         for (var p in Reserved.node){
             reserved[p]=true;
         }
+        for (var p in Config.reservedListV){
+            reserved[p]=true;
+        }
+        for (var p in Config.reservedList){
+            reserved[p]=true;
+        }
         for (var p in Config.blackListV){
             delete reserved[p];
         }
@@ -431,7 +437,7 @@ function GlobalScope(node , config){
 util.merger(GlobalScope.prototype, BaseScope.prototype);
 
 util.merger(GlobalScope.prototype , {
-    
+
     constructor : GlobalScope ,
 
     findStringLiteral : function(node, literals){
@@ -475,6 +481,12 @@ util.merger(GlobalScope.prototype , {
             reserved[p]=true;
         }
         for (var p in Reserved.dom){
+            reserved[p]=true;
+        }
+        for (var p in Config.reservedListP){
+            reserved[p]=true;
+        }
+        for (var p in Config.reservedList){
             reserved[p]=true;
         }
         for (var p in Config.blackListP){
