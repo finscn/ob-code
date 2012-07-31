@@ -217,77 +217,6 @@ BaseScope.prototype={
         });
 
     },
-    obfuscateChildren : function(cache){
-        this.childScopes.forEach(function(child){
-            var _cache=Object.create(null);
-            util.merger(_cache, cache);
-            child.obfuscate(_cache);
-        });
-    },
-
-    obfuscate : function(cache){
-        cache=cache||Object.create(null);
-        for (var key in this.usedIdentifier){
-            cache[key]=true;
-        }
- 
-        var self=this;
-        var varKeys=Object.keys(this.variables);
-        var funcKeys=Object.keys(this.functions);
-        var paramKeys=Object.keys(this.parameters||Object.create(null));
-        
-        var count=varKeys.length+funcKeys.length+paramKeys.length;
-
-        var reserved=Object.create(null);
-        for (var p in Reserved.keyword){
-            reserved[p]=true;
-        }
-        for (var p in Reserved.global){
-            reserved[p]=true;
-        }
-        for (var p in Reserved.node){
-            reserved[p]=true;
-        }
-        for (var p in Config.blackListV){
-            delete reserved[p];
-        }
-        for (var p in Config.blackList){
-            delete reserved[p];
-        }
-        for (var p in Config.whiteListV){
-            reserved[p]=true;
-        }
-        for (var p in Config.whiteList){
-            reserved[p]=true;
-        }
-
-
-        var newNames=util.getRandomNames(count, cache, reserved);
-        var i=0;
-        varKeys.forEach(function(k){
-            if (!reserved[k]){
-                VarMapping[k]=newNames[i];
-                self.changeVarName(k, newNames[i]);
-                i++;
-            }
-        });
-        funcKeys.forEach(function(k){
-            if (!reserved[k] && k.indexOf("(")!=0 ){
-                VarMapping[k]=newNames[i];
-                self.changeFuncName(k, newNames[i]);
-                i++;
-            }
-        });
-        paramKeys.forEach(function(k){
-             if (!reserved[k]){
-                VarMapping[k]=newNames[i];
-                self.changeParamName(k, newNames[i]);
-                i++;
-            }
-        });
-        this.obfuscateChildren(cache);
-
-    },
 
 
     isInCurrentScope : function(node){
@@ -323,6 +252,7 @@ BaseScope.prototype={
             })
         }
     },
+
     changeFuncName : function(oldName, newName){
         var list=this.functions[oldName];
         delete this.functions[oldName];
@@ -338,23 +268,91 @@ BaseScope.prototype={
         }
     },
 
-    findStringLiteral : function(node, literals){
-        literals=literals||Object.create(null);
-        if (Array.isArray(node)){
-            for (var i=0,len=node.length;i<len;i++){
-                this.findStringLiteral(node[i],literals);
-            }
-        }else if (util.isObject(node)){
-            if (node.type==Syntax.Literal && typeof node.value =="string"){
-                var value=node.value;
-                literals[value]=literals[value]||[];
-                literals[value].push(node);
-            }
-            for (var key in node){
-                this.findStringLiteral( node[key],literals );                    
-            }
+    obfuscateChildren : function(cache){
+        this.childScopes.forEach(function(child){
+            var _cache=Object.create(null);
+            util.merger(_cache, cache);
+            child.obfuscate(_cache);
+        });
+    },
+
+    obfuscate : function(cache){
+        cache=cache||Object.create(null);
+        for (var key in this.usedIdentifier){
+            cache[key]=true;
         }
-        return literals;
+ 
+        var self=this;
+        var varKeys=Object.keys(this.variables);
+        var funcKeys=Object.keys(this.functions);
+        var paramKeys=Object.keys(this.parameters||Object.create(null));
+        
+
+        var reserved=Object.create(null);
+        for (var p in Reserved.keyword){
+            reserved[p]=true;
+        }
+        for (var p in Reserved.global){
+            reserved[p]=true;
+        }
+        for (var p in Reserved.node){
+            reserved[p]=true;
+        }
+        for (var p in Config.blackListV){
+            delete reserved[p];
+        }
+        for (var p in Config.blackList){
+            delete reserved[p];
+        }
+        for (var p in Config.whiteListV){
+            reserved[p]=true;
+        }
+        for (var p in Config.whiteList){
+            reserved[p]=true;
+        }
+
+
+        var allKeys=[];
+         varKeys.forEach(function(k){
+            if (!reserved[k]){
+                allKeys.push( { key : k , type :"variables" });
+            }
+         });
+         funcKeys.forEach(function(k){
+            if (!reserved[k] && k.indexOf("(")!=0){
+                allKeys.push( { key : k , type :"functions" });
+            }
+         });
+         paramKeys.forEach(function(k){
+            if (!reserved[k]){
+                allKeys.push( { key : k , type :"parameters" });
+            }
+         });
+
+        allKeys.sort(function(a,b){
+            var _a= self[a.type][a.key].length;
+            var _b= self[b.type][b.key].length;
+            return _b-_a;
+        });
+
+        var newNames=util.getRandomNames(allKeys.length, cache, reserved);
+
+        allKeys.forEach(function(a,idx){
+            var n=newNames[idx];
+            var k=a.key;
+            var type=a.type;
+            VarMapping[k]=n;
+            if (type=="variables"){
+                self.changeVarName(k, n);
+            }else if (type=="functions"){
+                self.changeFuncName(k, n);
+            }else if (type=="parameters"){
+                self.changeParamName(k, n);
+            }
+        })
+
+        this.obfuscateChildren(cache);
+
     },
 
     findDeclaration : function(node){
@@ -431,8 +429,30 @@ function GlobalScope(node , config){
 }
 
 util.merger(GlobalScope.prototype, BaseScope.prototype);
+
 util.merger(GlobalScope.prototype , {
+    
     constructor : GlobalScope ,
+
+    findStringLiteral : function(node, literals){
+        literals=literals||Object.create(null);
+        if (Array.isArray(node)){
+            for (var i=0,len=node.length;i<len;i++){
+                this.findStringLiteral(node[i],literals);
+            }
+        }else if (util.isObject(node)){
+            if (node.type==Syntax.Literal && typeof node.value =="string"){
+                var value=node.value;
+                literals[value]=literals[value]||[];
+                literals[value].push(node);
+            }
+            for (var key in node){
+                this.findStringLiteral( node[key],literals );                    
+            }
+        }
+        return literals;
+    },
+
     obfuscateProperties : function(properties, literals, blackListStr){
         var properKeys=Object.keys(properties);
         var self=this;
@@ -472,6 +492,12 @@ util.merger(GlobalScope.prototype , {
 
 
         var newNames=util.getRandomNames(count, cache, reserved);
+
+        properKeys.sort(function(a,b){
+            var _a=properties[a].length;
+            var _b=properties[b].length;
+            return _b-_a;
+        });
 
         properKeys.forEach(function(k,idx){
 

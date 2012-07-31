@@ -34,18 +34,29 @@ function start() {
 
 	var globalScope = new ob.GlobalScope(result, config);
 
-
-
-
 	globalScope.obfuscateChildren();
 
 	var literals=globalScope.findStringLiteral(result);
 	var rp= globalScope.obfuscateProperties(ob.Properties,literals, config.blackListStr );
 
-
 	var code = escodegen.generate(result, {
-		indent: "	"
-	});
+    format: {
+        indent: {
+            style: '	',
+            base: 0
+        },
+        json: false,
+        renumber: false,
+        hexadecimal: false,
+        quotes: 'single',
+        escapeless: false,
+        compact: false,
+        parentheses: true,
+        semicolons: true
+    },
+    parse: null,
+    comment: false
+});
 
 	if (outFile) {
 		var rs = writeFile(config.baseDir + "/" + outFile, code, encode);
