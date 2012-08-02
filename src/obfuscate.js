@@ -41,9 +41,8 @@ function start() {
 	globalScope.obfuscateChildren();
 
 	var literals=globalScope.findStringLiteral(result);
-	var blackMapping=globalScope.obfuscateString(literals, config.blackListStr);
-
-	var rp= globalScope.obfuscateProperties(ob.Properties, blackMapping );
+	var rp= globalScope.obfuscateProperties(ob.Properties);
+	globalScope.obfuscateString(literals);
 
 	var code = escodegen.generate(result, {
     format: {
@@ -106,7 +105,6 @@ function parseConfigFile(filePath, encode) {
 	config.blackList = Object.create(null);
 	config.blackListV = Object.create(null);
 	config.blackListP = Object.create(null);
-	config.blackListStr = Object.create(null);
 	config.reservedList = Object.create(null);
 	config.reservedListV = Object.create(null);
 	config.reservedListP = Object.create(null);
@@ -114,7 +112,7 @@ function parseConfigFile(filePath, encode) {
 	var code = fs.readFileSync(filePath, encode);
 	code = code.trim();
 
-		var pcode=!config.jsWrapp?"":"\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
+		var pcode="\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
 
 	if (filePath.lastIndexOf(".js") == filePath.length - 3) {
 		config.code = code //+pcode;
@@ -153,9 +151,6 @@ function parseConfigFile(filePath, encode) {
 			} else if (line == "[BLACK-LIST:PROPERTY]") {
 				current = "blackListP";
 
-			} else if (line == "[BLACK-LIST:STRING]") {
-				current = "blackListStr";
-
 			} else if (line == "[RESERVED]") {
 				current = "reservedList";
 
@@ -171,7 +166,7 @@ function parseConfigFile(filePath, encode) {
 					var file = path.normalize(config.baseDir + "/" + line);
 					var code = fs.readFileSync(file, encode);
 					codes.push(code.trim());
-					if (Math.random()<0.8){
+					if (Math.random()<0.8 && config.jsWrapp){
 						codes.push(pcode);
 						pcode=""
 					}
@@ -179,8 +174,12 @@ function parseConfigFile(filePath, encode) {
 					config[current][line] = true;
 				}
 			}
-		})
-		codes.push(pcode);
+		});
+		
+		if (config.jsWrapp){
+			codes.push(pcode);
+		}
+		
 		config.code = codes.join("\n;\n");
 	}
 

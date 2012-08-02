@@ -472,18 +472,22 @@ util.merger(GlobalScope.prototype , {
         return literals;
     },
 
-    obfuscateString : function(strings, blackListStr){
+    obfuscateString : function(strings){
         var literalKeys=Object.keys(strings);
         var self=this;
         var cache=Object.create(null); 
         var reserved=Object.create(null);
-        var count=Object.keys(blackListStr).length;
 
-        var newNames=util.getRandomNames(count, cache, reserved);
+        var count=0;
+        var stringMapping=Object.create(null);
+        for (var k in PropertyMapping){
+            stringMapping[PropertyMapping[k]]=k;
+            count++;
+        }
         var i=0;
         literalKeys.forEach(function(k,idx){
-            if(blackListStr[k]){
-                var newName=newNames[i++];
+            if(stringMapping[k]){
+                var newName=stringMapping[k];
                 StringMapping[newName]=k;
                 self.changeLiteralValue(strings,k,newName);
             }
@@ -491,18 +495,11 @@ util.merger(GlobalScope.prototype , {
         return StringMapping;
     },
 
-    obfuscateProperties : function(properties, stringMapping){
+    obfuscateProperties : function(properties){
         var properKeys=Object.keys(properties);
         var self=this;
         var count=properKeys.length;
         var cache=Object.create(null);
-        stringMapping=stringMapping||Object.create(null);
-
-        var mapping=Object.create(null);
-        for (var k in stringMapping){
-            mapping[stringMapping[k]]=k;
-            cache[k]=true;
-        }
 
         var reservedProperties=Object.create(null);
 
@@ -549,10 +546,7 @@ util.merger(GlobalScope.prototype , {
         var i=0;
         properKeys.forEach(function(k){
 
-            if(mapping[k]){
-                var newName=mapping[k];
-                self.changePropertyName(properties,k, newName);
-            }else if (!reserved[k]){
+            if (!reserved[k]){
                 PropertyMapping[newNames[i]]=k;
                 self.changePropertyName(properties,k, newNames[i]);
                 i++;
@@ -560,6 +554,7 @@ util.merger(GlobalScope.prototype , {
                 reservedProperties[k]=properties[k];
             }
         });
+
 
         return reservedProperties;
     },
