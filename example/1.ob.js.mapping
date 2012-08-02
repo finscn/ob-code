@@ -1,0 +1,19 @@
+[VAR-MAPPING]
+M = colors,c
+v = result
+W = a
+R = b,b
+H = c
+m = key
+g = args
+U = arge
+k = a
+
+
+[PROPERTY-MAPPING]
+h=otherProperty
+
+
+[STRING-MAPPING]
+K = black
+z = blackProperty

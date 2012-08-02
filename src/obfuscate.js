@@ -41,7 +41,9 @@ function start() {
 	globalScope.obfuscateChildren();
 
 	var literals=globalScope.findStringLiteral(result);
-	var rp= globalScope.obfuscateProperties(ob.Properties,literals, config.blackListStr );
+	var blackMapping=globalScope.obfuscateString(literals, config.blackListStr);
+
+	var rp= globalScope.obfuscateProperties(ob.Properties, blackMapping );
 
 	var code = escodegen.generate(result, {
     format: {
@@ -72,12 +74,17 @@ function start() {
 		var mapping=[];
 
 		mapping.push("[VAR-MAPPING]");
-		for (var oldName in ob.VarMapping){
-			mapping.push(oldName+"="+ob.VarMapping[oldName])
+		for (var newName in ob.VarMapping){
+			mapping.push(newName+" = "+ob.VarMapping[newName])
 		}
 		mapping.push("\n\n[PROPERTY-MAPPING]");
-		for (var oldName in ob.PropertyMapping){
-			mapping.push(oldName+"="+ob.PropertyMapping[oldName])
+		for (var newName in ob.PropertyMapping){
+			mapping.push(newName+"="+ob.PropertyMapping[newName])
+		}
+
+		mapping.push("\n\n[STRING-MAPPING]");
+		for (var newValue in ob.StringMapping){
+			mapping.push(newValue+" = "+ob.StringMapping[newValue])
 		}
 		var rs = writeFile(config.baseDir + "/" + outFile+".mapping", mapping.join("\n"), encode);
 	}
@@ -107,7 +114,7 @@ function parseConfigFile(filePath, encode) {
 	var code = fs.readFileSync(filePath, encode);
 	code = code.trim();
 
-		var pcode="\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
+		var pcode=!config.jsWrapp?"":"\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
 
 	if (filePath.lastIndexOf(".js") == filePath.length - 3) {
 		config.code = code //+pcode;

@@ -308,19 +308,18 @@ BaseScope.prototype={
         for (var p in Config.reservedList){
             reserved[p]=true;
         }
-        for (var p in Config.blackListV){
-            delete reserved[p];
-        }
-        for (var p in Config.blackList){
-            delete reserved[p];
-        }
         for (var p in Config.whiteListV){
             reserved[p]=true;
         }
         for (var p in Config.whiteList){
             reserved[p]=true;
         }
-
+        for (var p in Config.blackListV){
+            delete reserved[p];
+        }
+        for (var p in Config.blackList){
+            delete reserved[p];
+        }
 
         var allKeys=[];
          varKeys.forEach(function(k){
@@ -351,7 +350,10 @@ BaseScope.prototype={
             var n=newNames[idx];
             var k=a.key;
             var type=a.type;
-            VarMapping[k]=n;
+            if (!VarMapping[n]){
+                VarMapping[n]=[];
+            }
+            VarMapping[n].push(k);
             if (type=="variables"){
                 self.changeVarName(k, n);
             }else if (type=="functions"){
@@ -422,6 +424,7 @@ BaseScope.prototype={
 
 var VarMapping=Object.create(null)
 var PropertyMapping=Object.create(null)
+var StringMapping=Object.create(null)
 function GlobalScope(node , config){
 
     this.name="/";
@@ -469,14 +472,37 @@ util.merger(GlobalScope.prototype , {
         return literals;
     },
 
-    obfuscateProperties : function(properties, literals, blackListStr){
+    obfuscateString : function(strings, blackListStr){
+        var literalKeys=Object.keys(strings);
+        var self=this;
+        var cache=Object.create(null); 
+        var reserved=Object.create(null);
+        var count=Object.keys(blackListStr).length;
+
+        var newNames=util.getRandomNames(count, cache, reserved);
+        var i=0;
+        literalKeys.forEach(function(k,idx){
+            if(blackListStr[k]){
+                var newName=newNames[i++];
+                StringMapping[newName]=k;
+                self.changeLiteralValue(strings,k,newName);
+            }
+        });
+        return StringMapping;
+    },
+
+    obfuscateProperties : function(properties, stringMapping){
         var properKeys=Object.keys(properties);
         var self=this;
         var count=properKeys.length;
         var cache=Object.create(null);
+        stringMapping=stringMapping||Object.create(null);
 
-        literals=literals||Object.create(null);
-        blackListStr=blackListStr||Object.create(null);
+        var mapping=Object.create(null);
+        for (var k in stringMapping){
+            mapping[stringMapping[k]]=k;
+            cache[k]=true;
+        }
 
         var reservedProperties=Object.create(null);
 
@@ -499,19 +525,18 @@ util.merger(GlobalScope.prototype , {
         for (var p in Config.reservedList){
             reserved[p]=true;
         }
-        for (var p in Config.blackListP){
-            delete reserved[p];
-        }
-        for (var p in Config.blackList){
-            delete reserved[p];
-        }
         for (var p in Config.whiteListP){
             reserved[p]=true;
         }
         for (var p in Config.whiteList){
             reserved[p]=true;
         }
-
+        for (var p in Config.blackListP){
+            delete reserved[p];
+        }
+        for (var p in Config.blackList){
+            delete reserved[p];
+        }
 
         var newNames=util.getRandomNames(count, cache, reserved);
 
@@ -521,15 +546,16 @@ util.merger(GlobalScope.prototype , {
             return _b-_a;
         });
 
-        properKeys.forEach(function(k,idx){
+        var i=0;
+        properKeys.forEach(function(k){
 
-            if(blackListStr[k]){
-                var newName=util.getRandomNames(1, cache, reserved)[0];
+            if(mapping[k]){
+                var newName=mapping[k];
                 self.changePropertyName(properties,k, newName);
-                self.changeLiteralValue(literals,k,newName);
             }else if (!reserved[k]){
-                PropertyMapping[k]=newNames[idx];
-                self.changePropertyName(properties,k, newNames[idx]);
+                PropertyMapping[newNames[i]]=k;
+                self.changePropertyName(properties,k, newNames[i]);
+                i++;
             }else {
                 reservedProperties[k]=properties[k];
             }
@@ -681,6 +707,7 @@ exports.Properties=Properties;
 exports.ScopePathMap=ScopePathMap;
 exports.VarMapping=VarMapping;
 exports.PropertyMapping=PropertyMapping;
+exports.StringMapping=StringMapping;
 
 
 }(typeof exports === 'undefined' ? (GT = {}) : exports));
