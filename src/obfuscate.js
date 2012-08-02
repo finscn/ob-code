@@ -1,8 +1,8 @@
 var fs = require('fs'),
 	path = require('path');
 
-var esprima = require("../parser/esprima"),
-	escodegen = require("../parser/escodegen");
+var esprima = require("../dependencies/esprima"),
+	escodegen = require("../dependencies/escodegen");
 
 var base = require("../src/base"),
 	ob = require('../src/ob-code');
@@ -34,6 +34,8 @@ function start() {
 	}
 	var result = parseJavaScript(code, encode);
 
+// console.log( JSON.stringify( result, util.adjustRegexLiteral, 2) );
+
 	var globalScope = new ob.GlobalScope(result, config);
 
 	globalScope.obfuscateChildren();
@@ -47,14 +49,14 @@ function start() {
             style: '	',
             base: 0
         },
-        json: false,
+        json: !false,
         renumber: false,
         hexadecimal: false,
         quotes: 'single',
         escapeless: false,
         compact: compact, //false,
         parentheses: true,
-        semicolons: true
+        semicolons: !true
     },
     parse: null,
     comment: false
@@ -108,7 +110,7 @@ function parseConfigFile(filePath, encode) {
 		var pcode="\n;(function(){var t=function(){console.log=window.eval=function(){}; };setInterval(t,300);t();}());\n";
 
 	if (filePath.lastIndexOf(".js") == filePath.length - 3) {
-		config.code = code+pcode;
+		config.code = code //+pcode;
 	} else {
 		var lines = code.split("\n");
 
@@ -118,6 +120,9 @@ function parseConfigFile(filePath, encode) {
 
 		lines.forEach(function(line) {
 			line = line.trim();
+			if (line.indexOf("#")==0){
+				return;
+			}
 			if (line == "[JS-FILE]") {
 				current = "code";
 			}else if (line == "[JS-WRAPP=true]") {

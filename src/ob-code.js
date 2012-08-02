@@ -1,6 +1,6 @@
 
-var esprima=require("../parser/esprima"),
-    escodegen=require("../parser/escodegen");
+var esprima=require("../dependencies/esprima"),
+    escodegen=require("../dependencies/escodegen");
 
 
 ;(function (exports) {
@@ -113,6 +113,10 @@ var Hanlder={
 
 
     // ObjectExpression : function(node){
+
+    // },
+    // 
+    // EmptyStatement : function(node){
 
     // },
 
@@ -388,7 +392,13 @@ BaseScope.prototype={
         if (Array.isArray(node)){
             for (var i=0,len=node.length;i<len;i++){
                 var _node=node[i];
-                self.parseNode(_node);
+                if (_node.type==Syntax.EmptyStatement){
+                    node.splice(i,1);
+                    i--;
+                    len--;
+                    continue;
+                }
+                self.parseNode(_node, i ,node);
             }
         }else if (util.isObject(node)){
             if (node.type!=Syntax.VariableDeclaration && node.type!=Syntax.FunctionDeclaration){
