@@ -1,6 +1,6 @@
 
 // run : 
-//     node ../src/obfuscate.js 1.config 1.ob.js
+//     node ../src/obfuscate.js 2.config 2.ob.js
 
 function foo(args){
 
