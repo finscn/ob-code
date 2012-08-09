@@ -1,31 +1,31 @@
-function foo(w) {
-	var j = 1;
-	var q = 2;
+function foo(v) {
+	var d = 1;
+	var z = 2;
 	var white = 3;
-	var m = j + q + white;
-	var g = [
+	var x = d + z + white;
+	var i = [
 			"red",
 			"green",
-			"blue",
-			"white",
-			"black"
+			"blue"
 		];
-	g.whiteProperty = 111;
-	g.L = 222;
-	g.blackProperty = 333;
-	var J = "blackProperty";
-	var T = g[J] + (w[0] || m);
-	console.log("args", w);
-	console.log("result", T);
-	return T
+	i.whiteProperty = 111;
+	i.M = 222;
+	var V = "whiteProperty";
+	var y = "M";
+	var f = i[V] + i[y] + (v[0] || x);
+	console.log("args: ", v);
+	console.log("propertyies: ", i.whiteProperty, i.M);
+	console.log("result: ", f);
+	console.log("colors: ", i.join(","));
+	return f
 }
-function test(r) {
-	var l = 1, R = 2, e = 3;
-	r = r || [
-		l,
-		R,
-		e
+function test(J) {
+	var N = 1, O = 2, y = 3;
+	J = J || [
+		N,
+		O,
+		y
 	];
-	return foo(r)
+	return foo(J)
 }
 test()

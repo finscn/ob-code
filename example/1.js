@@ -9,18 +9,20 @@ function foo(args){
 	var white=3;
 	var c=a+b+white;
 
-	var colors=[ "red" , "green" , "blue", "white", "black" ];
+	var colors=[ "red" , "green" , "blue" ];
 
 	colors.whiteProperty=111;
 	colors.otherProperty=222;
 
-	colors.blackProperty=333;
-	var key="blackProperty";
+	var key1="whiteProperty";
+	var key2="otherProperty";
 
-	var result= colors[key] +(args[0]||c);
+	var result= colors[key1] +colors[key2]+(args[0]||c);
 
-	console.log( "args", args );
-	console.log( "result" ,result );
+	console.log( "args: ", args );
+	console.log( "propertyies: ", colors.whiteProperty, colors.otherProperty );
+	console.log( "result: " ,result );
+	console.log( "colors: " ,colors.join(",") );
 
 	return result;
 
