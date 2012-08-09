@@ -1,38 +1,32 @@
+// run :      node ../src/obfuscate.js 1.config 1.ob.js
 
-// run : 
-//     node ../src/obfuscate.js 1.config 1.ob.js
+function foo(args) {
 
-function foo(args){
+	var a = 1;
+	var whiteVar = a + (args || 0);
 
-	var a=1;
-	var b=2;
-	var white=3;
-	var c=a+b+white;
+	var obj1 = {};
+	obj1.whiteProperty = 10;
+	obj1.otherProperty = 20;
 
-	var colors=[ "red" , "green" , "blue" ];
+	var obj2 = {
+		whiteProperty: 100,
+		otherProperty: 200
+	};
 
-	colors.whiteProperty=111;
-	colors.otherProperty=222;
+	var key1 = "whiteProperty";
+	var key2 = "otherProperty";
+	var sum = whiteVar + obj1[key1] + obj1[key2] + obj2[key1] + obj2[key2];
 
-	var key1="whiteProperty";
-	var key2="otherProperty";
+	console.log("sum: ", sum);
+	var str = "objects info: ";
+	console.log(str, "\n\t", obj1, "\n\t", obj2);
 
-	var result= colors[key1] +colors[key2]+(args[0]||c);
-
-	console.log( "args: ", args );
-	console.log( "propertyies: ", colors.whiteProperty, colors.otherProperty );
-	console.log( "result: " ,result );
-	console.log( "colors: " ,colors.join(",") );
-
-	return result;
+	return sum;
 
 }
 
-function test(arge){
-	var a=1,b=2,c=3;
-	arge=arge||[a,b,c];
-	return  foo(arge);
+function test() {
+	return foo(5);
 }
-
 test();
-

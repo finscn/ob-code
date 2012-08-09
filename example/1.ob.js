@@ -1,31 +1,23 @@
-function foo(v) {
-	var d = 1;
-	var z = 2;
-	var white = 3;
-	var x = d + z + white;
-	var i = [
-			"red",
-			"green",
-			"blue"
-		];
-	i.whiteProperty = 111;
-	i.M = 222;
-	var V = "whiteProperty";
-	var y = "M";
-	var f = i[V] + i[y] + (v[0] || x);
-	console.log("args: ", v);
-	console.log("propertyies: ", i.whiteProperty, i.M);
-	console.log("result: ", f);
-	console.log("colors: ", i.join(","));
-	return f
+
+function foo(m) {
+	var M = 1;
+	var whiteVar = M + (m || 0);
+	var v = {};
+	v.whiteProperty = 10;
+	v.r = 20;
+	var S = {
+			whiteProperty: 100,
+			r: 200
+		};
+	var k = "whiteProperty";
+	var E = "r";
+	var Y = whiteVar + v[k] + v[E] + S[k] + S[E];
+	console.log("sum: ", Y);
+	var A = "objects info: ";
+	console.log(A, "\n\t", v, "\n\t", S);
+	return Y
 }
-function test(J) {
-	var N = 1, O = 2, y = 3;
-	J = J || [
-		N,
-		O,
-		y
-	];
-	return foo(J)
+function test() {
+	return foo(5)
 }
 test()

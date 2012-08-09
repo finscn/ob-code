@@ -78,7 +78,7 @@ function start() {
 		}
 		mapping.push("\n\n[PROPERTY-MAPPING]");
 		for (var newName in ob.PropertyMapping){
-			mapping.push(newName+"="+ob.PropertyMapping[newName])
+			mapping.push(newName+" = "+ob.PropertyMapping[newName])
 		}
 
 		mapping.push("\n\n[STRING-MAPPING]");

@@ -1,20 +1,18 @@
+
 [VAR-MAPPING]
-i = colors
-f = result
-d = a
-z = b
-x = c
-V = key1
-y = key2,c
-v = args
-J = arge
-N = a
-O = b
+v = obj1
+S = obj2
+k = key1
+E = key2
+Y = sum
+M = a
+A = str
+m = args
 
 
 [PROPERTY-MAPPING]
-M=otherProperty
+r = otherProperty
 
 
 [STRING-MAPPING]
-M = otherProperty
+r = otherProperty
