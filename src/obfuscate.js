@@ -21,7 +21,7 @@ function start() {
 
 	var compact=argv[argv.length-1]=="-c" || argv[argv.length-1]=="-C";
 	var configFile = argv[0];
-	var outFile = argv[1];
+	var outFile = argv[1]||(configFile?"all-min.js":null);
 	var encode=!argv[2] || argv.length==3 && compact ?"UTF-8":argv[2];
 
 
@@ -40,9 +40,9 @@ function start() {
 
 	globalScope.obfuscateChildren();
 
-	var literals=globalScope.findStringLiteral(result);
 	var rp= globalScope.obfuscateProperties(ob.Properties);
-	globalScope.obfuscateString(literals);
+	// var literals=globalScope.findStringLiteral(result);
+	// globalScope.obfuscateString(literals);
 
 	var code = escodegen.generate(result, {
     format: {
