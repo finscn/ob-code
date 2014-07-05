@@ -1,40 +1,37 @@
+"use strict";
 
-var objects=[
+var objects = [
+    'Object',
+    'Function',
+    'Array',
+    'String',
+    'Boolean',
+    'Number',
 
-	'Object',
-	'Function',
-	'Array',
-	'String',
-	'Boolean',
-	'Number',
-
-	'RegExp',
-	'Math',
-	'Date',
-	'Error',
-	'JSON'
+    'RegExp',
+    'Math',
+    'Date',
+    'Error',
+    'JSON'
 ];
 
-var propertiesM={};
-objects.forEach(function(oName){
-	var o=global[oName];
-	var names=Object.getOwnPropertyNames(o);
-	names.forEach( function(_n){
-		propertiesM[_n]=true;
-	})
-	if (o.prototype){
-		names=Object.getOwnPropertyNames(o.prototype);
-		names.forEach( function(_n){
-			propertiesM[_n]=true;
-		})
-	}
+var propertiesM = {};
+objects.forEach(function(oName) {
+    var o = global[oName];
+    var names = Object.getOwnPropertyNames(o);
+    names.forEach(function(_n) {
+        propertiesM[_n] = true;
+    })
+    if (o.prototype) {
+        names = Object.getOwnPropertyNames(o.prototype);
+        names.forEach(function(_n) {
+            propertiesM[_n] = true;
+        })
+    }
 });
-var properties=[];
-for (var key in propertiesM){
-	properties.push(key);
+var properties = [];
+for (var key in propertiesM) {
+    properties.push(key);
 }
-
-module.exports=properties;
-
-
-
+console.log(properties)
+module.exports = properties;

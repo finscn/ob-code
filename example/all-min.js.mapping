@@ -1,0 +1,12 @@
+[VAR-MAPPING]
+C = foo
+F = bar
+y = foo
+
+
+[PROPERTY-MAPPING]
+l = foo
+v = bar
+
+
+[STRING-MAPPING]

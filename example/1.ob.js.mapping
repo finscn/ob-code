@@ -1,18 +1,16 @@
-
 [VAR-MAPPING]
-v = obj1
-S = obj2
-k = key1
-E = key2
-Y = sum
-M = a
-A = str
-m = args
+t = obj1
+j = obj2
+d = key1
+L = key2
+R = sum
+Q = a
+o = str
+C = args
 
 
 [PROPERTY-MAPPING]
-r = otherProperty
+S = otherProperty
 
 
 [STRING-MAPPING]
-r = otherProperty

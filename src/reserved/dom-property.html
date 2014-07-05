@@ -80,6 +80,9 @@
 		plist.sort(function(a,b){
 			var _a=a.toLowerCase();
 			var _b=b.toLowerCase();
+			if (_a==_b){
+				return a>=b?-1:1;
+			}
 			return _a<_b?-1:1;
 		});
 		console.log(plist.length);
