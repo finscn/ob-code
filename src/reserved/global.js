@@ -1,7 +1,8 @@
 "use strict";
 
 module.exports = [
-
+    'window',
+    'document',
     'null',
     'true',
     'false',
@@ -26,6 +27,7 @@ module.exports = [
     'encodeURIComponent',
 
     'console',
+    'arguments',
 
     'Object',
     'Function',

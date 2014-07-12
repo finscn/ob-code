@@ -54,7 +54,11 @@
             var letter = "abcdefghijklmnopqrstuvwxyz";
             letter += letter.toUpperCase();
             var firstSeed = "$_" + letter;
-            var seed = firstSeed + number;
+            var specific = "\u0391\u0392\u0395\u0396\u0397\u0399\u039a\u039c\u039d\u039f\u03a1\u03a4\u03a5\u03a7\u03dc\u03f9\u03fa";
+            specific+="\u0405\u0406\u0408\u0410\u0412\u0415\u041c\u041d\u041e\u0420\u0421\u0422";
+            firstSeed+=specific;
+            specific="";
+            var seed = firstSeed + specific + number;
 
             reserved = reserved || {};
 

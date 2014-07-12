@@ -11,6 +11,7 @@ var base = require("./base"),
 
 var util = base.util;
 
+var protectGlobal = false;
 var protectPropery = false;
 
 start();
@@ -42,18 +43,25 @@ function start() {
 
     var globalScope = new ob.GlobalScope(result, config);
 
+
     globalScope.obfuscateChildren();
 
-    if (!protectPropery){
-        var rp = globalScope.obfuscateProperties(ob.Properties);
+    if (!protectGlobal) {
+        globalScope.obfuscate();
     }
-    // var literals=globalScope.findStringLiteral(result);
-    // globalScope.obfuscateString(literals);
+    if (!protectPropery) {
+        globalScope.obfuscateProperties(ob.Properties);
+    }
+    // if (!protectString) {
+    //     var literals = globalScope.findStringLiteral(result);
+    //     console.log(literals)
+    //     globalScope.obfuscateString(literals);
+    // }
 
     var code = escodegen.generate(result, {
         format: {
             indent: {
-                style: '	',
+                style: '    ',
                 base: 0
             },
             json: !false,

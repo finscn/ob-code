@@ -481,6 +481,14 @@ var esprima = require("esprima"),
             return literals;
         },
 
+        obfuscateTop: function() {
+            var variables = this.variables;
+            for (var key in variables) {
+                console.log(key, variables[key]);
+            }
+        },
+
+        // TODO
         obfuscateString: function(strings) {
             var literalKeys = Object.keys(strings);
             var self = this;
