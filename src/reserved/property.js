@@ -33,5 +33,5 @@ var properties = [];
 for (var key in propertiesM) {
     properties.push(key);
 }
-console.log(properties)
+// console.log(properties)
 module.exports = properties;

@@ -11,6 +11,8 @@ var base = require("./base"),
 
 var util = base.util;
 
+var protectPropery = false;
+
 start();
 
 function start() {
@@ -42,7 +44,9 @@ function start() {
 
     globalScope.obfuscateChildren();
 
-    var rp = globalScope.obfuscateProperties(ob.Properties);
+    if (!protectPropery){
+        var rp = globalScope.obfuscateProperties(ob.Properties);
+    }
     // var literals=globalScope.findStringLiteral(result);
     // globalScope.obfuscateString(literals);
 

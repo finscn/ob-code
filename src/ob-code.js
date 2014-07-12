@@ -117,7 +117,7 @@ var esprima = require("esprima"),
         // ObjectExpression : function(node){
 
         // },
-        // 
+        //
         // EmptyStatement : function(node){
 
         // },
@@ -430,31 +430,31 @@ var esprima = require("esprima"),
         }
     }
 
-    var VarMapping = Object.create(null)
-    var PropertyMapping = Object.create(null)
-    var StringMapping = Object.create(null)
+    var VarMapping = Object.create(null);
+    var PropertyMapping = Object.create(null);
+    var StringMapping = Object.create(null);
 
-        function GlobalScope(node, config) {
+    function GlobalScope(node, config) {
 
-            this.name = "/";
-            this.type = node.type || Syntax.Program;
+        this.name = "/";
+        this.type = node.type || Syntax.Program;
 
-            this.path = "/";
+        this.path = "/";
 
-            util.merger(Config, config);
+        util.merger(Config, config);
 
-            this.init();
+        this.init();
 
-            this.build(node);
+        this.build(node);
 
-            var self = this;
-            var uList = this.undefinedIdentifier;
-            uList.forEach(function(u, i) {
-                self.variables[u.name] = self.variables[u.name] || [];
-                self.variables[u.name].push(u);
-            });
-            this.undefinedIdentifier = [];
-        }
+        var self = this;
+        var uList = this.undefinedIdentifier;
+        uList.forEach(function(u, i) {
+            self.variables[u.name] = self.variables[u.name] || [];
+            self.variables[u.name].push(u);
+        });
+        this.undefinedIdentifier = [];
+    }
 
     util.merger(GlobalScope.prototype, BaseScope.prototype);
 
