@@ -11,7 +11,7 @@ function foo(args) {
 
 	var obj2 = {
 		whiteProperty: 100,
-		otherProperty: 200
+		"otherProperty": 200
 	};
 
 	var key1 = "whiteProperty";
@@ -27,6 +27,9 @@ function foo(args) {
 }
 
 function test() {
+	var obj3 = {};
+	obj3.whiteProperty = 10;
+	obj3.otherProperty = 20;
 	return foo(5);
 }
 test();

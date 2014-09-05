@@ -301,6 +301,9 @@ var esprima = require("esprima"),
             for (var p in Reserved.node) {
                 reserved[p] = true;
             }
+            for (var p in Reserved.domClass) {
+                reserved[p] = true;
+            }
             for (var p in Config.reservedListV) {
                 reserved[p] = true;
             }
@@ -321,6 +324,14 @@ var esprima = require("esprima"),
             }
 
             var allKeys = [];
+            paramKeys.forEach(function(k) {
+                if (!reserved[k]) {
+                    allKeys.push({
+                        key: k,
+                        type: "parameters"
+                    });
+                }
+            });
             varKeys.forEach(function(k) {
                 if (!reserved[k]) {
                     allKeys.push({
@@ -337,21 +348,17 @@ var esprima = require("esprima"),
                     });
                 }
             });
-            paramKeys.forEach(function(k) {
-                if (!reserved[k]) {
-                    allKeys.push({
-                        key: k,
-                        type: "parameters"
-                    });
-                }
-            });
 
-            allKeys.sort(function(a, b) {
-                var _a = self[a.type][a.key].length;
-                var _b = self[b.type][b.key].length;
-                return _b - _a;
-            });
+            // allKeys.sort(function(a, b) {
+            //     var _a = self[a.type][a.key].length;
+            //     var _b = self[b.type][b.key].length;
+            //     return _b - _a;
+            // });
 
+            allKeys.forEach(function(a, idx) {
+                var k = a.key;
+                reserved[k] = true;
+            });
             var newNames = util.getRandomNames(allKeys.length, cache, reserved);
 
             allKeys.forEach(function(a, idx) {
@@ -552,13 +559,16 @@ var esprima = require("esprima"),
                 delete reserved[p];
             }
 
-            var newNames = util.getRandomNames(count, cache, reserved);
+            // properKeys.sort(function(a, b) {
+            //     var _a = properties[a].length;
+            //     var _b = properties[b].length;
+            //     return _b - _a;
+            // });
 
-            properKeys.sort(function(a, b) {
-                var _a = properties[a].length;
-                var _b = properties[b].length;
-                return _b - _a;
+            properKeys.forEach(function(k) {
+                reserved[k] = true;
             });
+            var newNames = util.getRandomNames(count, cache, reserved);
 
             var i = 0;
             properKeys.forEach(function(k) {

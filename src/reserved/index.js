@@ -5,6 +5,7 @@ var lists = {
     global: require("./global"),
     property: require("./property"),
     dom: require("./dom"),
+    domClass: require("./domClass"),
     node: require("./node")
 }
 

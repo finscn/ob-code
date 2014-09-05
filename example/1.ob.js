@@ -1,22 +1,25 @@
-function foo(C) {
-	var Q = 1;
-	var whiteVar = Q + (C || 0);
-	var t = {};
-	t.whiteProperty = 10;
-	t.S = 20;
-	var j = {
-			whiteProperty: 100,
-			S: 200
-		};
-	var d = "whiteProperty";
-	var L = "otherProperty";
-	var R = whiteVar + t[d] + t[L] + j[d] + j[L];
-	console.log("sum: ", R);
-	var o = "objects info: ";
-	console.log(o, "\n\t", t, "\n\t", j);
-	return R
+function W(X) {
+    var N = 1;
+    var whiteVar = N + (X || 0);
+    var Υ = {};
+    Υ.whiteProperty = 10;
+    Υ.t = 20;
+    var $ = {
+            whiteProperty: 100,
+            "otherProperty": 200
+        };
+    var V = "whiteProperty";
+    var Ϲ = "otherProperty";
+    var _ = whiteVar + Υ[V] + Υ[Ϲ] + $[V] + $[Ϲ];
+    console.log("sum: ", _);
+    var w = "objects info: ";
+    console.log(w, "\n\t", Υ, "\n\t", $);
+    return _
 }
-function test() {
-	return foo(5)
+function A() {
+    var g = {};
+    g.whiteProperty = 10;
+    g.t = 20;
+    return W(5)
 }
-test()
+A()
