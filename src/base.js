@@ -20,24 +20,30 @@
         isObject: function(v) {
             return Object.prototype.toString.apply(v) === "[object Object]"
         },
-
+        generateRandomFunction: function(seed) {
+            return function() {
+                seed = (214013 * seed + 2531011) % 0x100000000;
+                return seed / 4294967296;
+            };
+        },
         getRandom: function(lower, higher) {
             return Math.floor((higher - lower + 1) * Math.random()) + lower;
+            // return Math.floor((higher - lower + 1) * this.random()) + lower;
         },
 
-        arrayShuffle: function(arr) {
-            for (var i = arr.length - 1; i > 0; i--) {
-                var rnd = (Math.random() * (i)) >> 0;
-                var temp = arr[i];
-                arr[i] = arr[rnd];
-                arr[rnd] = temp;
-            }
-            return arr;
-        },
+        // arrayShuffle: function(arr) {
+        //     for (var i = arr.length - 1; i > 0; i--) {
+        //         var rnd = (Math.random() * (i)) >> 0;
+        //         var temp = arr[i];
+        //         arr[i] = arr[rnd];
+        //         arr[rnd] = temp;
+        //     }
+        //     return arr;
+        // },
 
-        stringShuffle: function(str) {
-            return util.arrayShuffle(str.split("")).join("");
-        },
+        // stringShuffle: function(str) {
+        //     return util.arrayShuffle(str.split("")).join("");
+        // },
 
         getRandomWord: function(len, seed, word) {
             word = word || [];
@@ -101,6 +107,7 @@
 
     }
 
+    _util.random=_util.generateRandomFunction(123123);
     var util = _util;
     if (typeof require == 'function') {
         util = require('util');

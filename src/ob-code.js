@@ -74,7 +74,7 @@ var esprima = require("esprima"),
 
             if (key == "property" && !parentNode.computed) {
                 Hanlder._addProperty(node.name, node);
-                return;
+                return false;
             }
 
             if (varMap && Array.isArray(varMap[name])) {
@@ -232,42 +232,48 @@ var esprima = require("esprima"),
         changeVarName: function(oldName, newName) {
             var list = this.variables[oldName];
             delete this.variables[oldName];
-            if (list) {
+            if (list && !list._changed) {
                 this.variables[newName] = list;
 
                 list.forEach(function(v) {
                     v.name = newName;
-                })
-            }
-            if (this.parameters && (oldName in this.parameters)) {
-                this.changeParamName(oldName, newName);
+                });
+                list._changed = true;
+                if (this.parameters && (oldName in this.parameters)) {
+                    this.changeParamName(oldName, newName);
+                }
             }
         },
 
         changeParamName: function(oldName, newName) {
             var list = this.parameters[oldName];
             delete this.parameters[oldName];
-            if (list) {
+            if (list && !list._changed) {
                 this.parameters[newName] = list;
 
                 list.forEach(function(v) {
                     v.name = newName;
-                })
+                });
+                list._changed = true;
+                if (this.variables && (oldName in this.variables)) {
+                    this.changeVarName(oldName, newName);
+                }
             }
         },
 
         changeFuncName: function(oldName, newName) {
             var list = this.functions[oldName];
             delete this.functions[oldName];
-            if (list) {
+            if (list && !list._changed) {
                 this.functions[newName] = list;
 
                 list.forEach(function(v) {
                     v.name = newName;
-                })
-            }
-            if (this.parameters && (oldName in this.parameters)) {
-                this.changeParamName(oldName, newName);
+                });
+                list._changed = true;
+                if (this.variables && (oldName in this.variables)) {
+                    this.changeVarName(oldName, newName);
+                }
             }
         },
 
@@ -360,7 +366,6 @@ var esprima = require("esprima"),
                 reserved[k] = true;
             });
             var newNames = util.getRandomNames(allKeys.length, cache, reserved);
-
             allKeys.forEach(function(a, idx) {
                 var n = newNames[idx];
                 var k = a.key;
@@ -565,14 +570,10 @@ var esprima = require("esprima"),
             //     return _b - _a;
             // });
 
-            properKeys.forEach(function(k) {
-                reserved[k] = true;
-            });
             var newNames = util.getRandomNames(count, cache, reserved);
 
             var i = 0;
             properKeys.forEach(function(k) {
-
                 if (!reserved[k]) {
                     PropertyMapping[newNames[i]] = k;
                     self.changePropertyName(properties, k, newNames[i]);
@@ -730,6 +731,5 @@ var esprima = require("esprima"),
     exports.VarMapping = VarMapping;
     exports.PropertyMapping = PropertyMapping;
     exports.StringMapping = StringMapping;
-
 
 }(typeof exports === 'undefined' ? (GT = {}) : exports));

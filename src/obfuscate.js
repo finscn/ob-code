@@ -44,11 +44,13 @@ function start() {
     var globalScope = new ob.GlobalScope(result, config);
 
 
-    globalScope.obfuscateChildren();
 
     if (!protectGlobal) {
         globalScope.obfuscate();
     }
+
+    globalScope.obfuscateChildren();
+
     if (!protectPropery) {
         globalScope.obfuscateProperties(ob.Properties);
     }
