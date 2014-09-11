@@ -27,8 +27,8 @@
             };
         },
         getRandom: function(lower, higher) {
-            return Math.floor((higher - lower + 1) * Math.random()) + lower;
-            // return Math.floor((higher - lower + 1) * this.random()) + lower;
+            // return Math.floor((higher - lower + 1) * Math.random()) + lower;
+            return Math.floor((higher - lower + 1) * this.random()) + lower;
         },
 
         // arrayShuffle: function(arr) {
@@ -107,7 +107,7 @@
 
     }
 
-    _util.random=_util.generateRandomFunction(123123);
+    _util.random=_util.generateRandomFunction( Date.now()/(1000*1000)>>0);
     var util = _util;
     if (typeof require == 'function') {
         util = require('util');
