@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = [
+    'alert',
     'window',
     'document',
     'null',
@@ -9,7 +10,6 @@ module.exports = [
     'NaN',
     'undefined',
     'Infinty',
-
     'eval',
     'setTimeout',
     'clearTimeout',
@@ -43,4 +43,5 @@ module.exports = [
     'JSON',
 
     'WeixinJSBridge',
+    '$$',
 ];

@@ -9,7 +9,6 @@ var esprima = require("esprima"),
         require = function() {};
     }
 
-
     var base = require("./base") || this,
         Reserved = require("./reserved"),
         util = base.util;
@@ -277,25 +276,24 @@ var esprima = require("esprima"),
             }
         },
 
-        obfuscateChildren: function(cache) {
-            this.childScopes.forEach(function(child) {
-                var _cache = Object.create(null);
-                util.merger(_cache, cache);
-                child.obfuscate(_cache);
-            });
+        obfuscate: function(cache) {
+            this.obfuscateSelf(cache);
+            this.obfuscateChildren(cache);
         },
 
-        obfuscate: function(cache) {
+        obfuscateSelf: function(cache) {
             cache = cache || Object.create(null);
             for (var key in this.usedIdentifier) {
                 cache[key] = true;
+            }
+            for (var k in Config.varMapping) {
+                cache[Config.varMapping[k]] = true;
             }
 
             var self = this;
             var varKeys = Object.keys(this.variables);
             var funcKeys = Object.keys(this.functions);
             var paramKeys = Object.keys(this.parameters || Object.create(null));
-
 
             var reserved = Object.create(null);
             for (var p in Reserved.keyword) {
@@ -365,10 +363,19 @@ var esprima = require("esprima"),
                 var k = a.key;
                 reserved[k] = true;
             });
+
+            for (var k in GlobalMapping) {
+                var n = GlobalMapping[k];
+                cache[n] = true;
+            }
+
             var newNames = util.getRandomNames(allKeys.length, cache, reserved);
+            var Me = this;
             allKeys.forEach(function(a, idx) {
-                var n = newNames[idx];
                 var k = a.key;
+                var n = Config.varMapping[k];
+                n = n || newNames[idx];
+
                 var type = a.type;
                 if (!VarMapping[n]) {
                     VarMapping[n] = [];
@@ -381,10 +388,18 @@ var esprima = require("esprima"),
                 } else if (type == "parameters") {
                     self.changeParamName(k, n);
                 }
-            })
+                if (Me.isGlobal) {
+                    GlobalMapping[k] = n;
+                }
+            });
+        },
 
-            this.obfuscateChildren(cache);
-
+        obfuscateChildren: function(cache) {
+            this.childScopes.forEach(function(child) {
+                var _cache = Object.create(null);
+                util.merger(_cache, cache);
+                child.obfuscate(_cache);
+            });
         },
 
         findDeclaration: function(node) {
@@ -445,6 +460,7 @@ var esprima = require("esprima"),
     var VarMapping = Object.create(null);
     var PropertyMapping = Object.create(null);
     var StringMapping = Object.create(null);
+    var GlobalMapping = Object.create(null);
 
     function GlobalScope(node, config) {
 
@@ -473,6 +489,8 @@ var esprima = require("esprima"),
     util.merger(GlobalScope.prototype, {
 
         constructor: GlobalScope,
+
+        isGlobal: true,
 
         findStringLiteral: function(node, literals) {
             literals = literals || Object.create(null);
@@ -530,6 +548,10 @@ var esprima = require("esprima"),
             var count = properKeys.length;
             var cache = Object.create(null);
 
+            for (var k in Config.propertyMapping) {
+                cache[Config.propertyMapping[k]] = true;
+            }
+
             var reservedProperties = Object.create(null);
 
             var reserved = Object.create(null);
@@ -575,8 +597,10 @@ var esprima = require("esprima"),
             var i = 0;
             properKeys.forEach(function(k) {
                 if (!reserved[k]) {
-                    PropertyMapping[newNames[i]] = k;
-                    self.changePropertyName(properties, k, newNames[i]);
+                    var n = Config.propertyMapping[k];
+                    n = n || newNames[i];
+                    PropertyMapping[n] = k;
+                    self.changePropertyName(properties, k, n);
                     i++;
                 } else {
                     reservedProperties[k] = properties[k];
@@ -730,6 +754,7 @@ var esprima = require("esprima"),
     exports.ScopePathMap = ScopePathMap;
     exports.VarMapping = VarMapping;
     exports.PropertyMapping = PropertyMapping;
+    exports.GlobalMapping = GlobalMapping;
     exports.StringMapping = StringMapping;
 
 }(typeof exports === 'undefined' ? (GT = {}) : exports));
