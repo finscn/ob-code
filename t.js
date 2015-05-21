@@ -1,1 +1,0 @@
-_='f iCc = new er.C({beforeI: fthis.dom = window;},preventDefaultMove: true,moveInterval: 30});c.i();}ontrollerunctionnitTouch() {';for(Y in $=''){with(_.split($[Y]))_=join(pop());};eval(_)
