@@ -31,8 +31,9 @@
 	}
 
 	var plist;
+	var globalMap={};
 	function start(event){
-		
+
 		var pmap={};
 		var pool=$id("ui-pool");
 		parseNode(pool,pmap);
@@ -75,6 +76,20 @@
 
 		parseNode(document.createElement("canvas").getContext("2d"),pmap);
 		// parseNode(window.localStorage,api);
+		parseNode(new Image(),pmap);
+		parseNode(new Audio(),pmap);
+		// parseNode(new Video(),pmap);
+
+		window.AudioContext=window.AudioContext||window.webkitAudioContext
+        var context = new AudioContext();
+        var gain = context.createGain();
+		var source = context.createBufferSource();
+        var buffer = context.createBuffer(1, 22050, 22050);
+		parseNode(context,pmap);
+		parseNode(gain,pmap);
+		parseNode(gain.gain,pmap);
+		parseNode(source,pmap);
+		parseNode(buffer,pmap);
 
 		plist=Object.keys(pmap)
 		plist.sort(function(a,b){
@@ -89,8 +104,16 @@
 
 		var str= '[\n\"'+ plist.join('",\n"')+'"\n]'//JSON.stringify(plist);
 		// console.log(str);
+		$id("output").value=str;
 
-		$id("output").value=str
+		plist=[];
+		for (var p in window){
+			plist.push(p);
+		}
+		var str= '[\n\"'+ plist.join('",\n"')+'"\n]'//JSON.stringify(plist);
+		$id("output2").value=str;
+
+
 	}
 
 	function excludeClass(item){
@@ -107,7 +130,7 @@
 		if (node.prototype){
 			parseNode(node.prototype,plist)
 		}
-		if (node.style){
+		if ( ("style" in node) && node.style){
 			parseNode(node.style,plist)
 		}
 		if (node.childNodes){
@@ -173,6 +196,9 @@
 <body>
 
 <textarea id="output" rows="30" cols="60"></textarea>
+<br>
+<div>window</div>
+<textarea id="output2" rows="20" cols="60"></textarea>
 
 
 <div id="ui-pool" style="display: none">

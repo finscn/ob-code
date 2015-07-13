@@ -1,27 +1,28 @@
 [VAR-MAPPING]
-Ε = obj1
-F = obj2
-t = key1
-Ρ = key2
-G = sum
-Ζ = a
-W = str,foo
-z = args
-U = obj3
-A = test
-Υ = Ε
-$ = F
-V = t
-Ϲ = Ρ
-_ = G
-N = Ζ
-w = W
-X = z
-g = U
+ImageUtils = q
+test = _
+foo = p
+test = n
+args = $
+a = U
+obj1 = Z
+obj2 = CCCCC
+ss1 = I
+ss2 = L
+key1 = l
+key2 = M
+sum = J
+str = t
+obj3 = r
+a = Y
 
 
 [PROPERTY-MAPPING]
-t = otherProperty
+otherProperty = V
+sports = ccccccc
+xyz = s
+readCodeFromURL = U
+fun = l
 
 
 [STRING-MAPPING]

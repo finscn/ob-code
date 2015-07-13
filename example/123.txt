@@ -1,0 +1,1170 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "foo",
+        "range": [
+          66,
+          69
+        ]
+      },
+      "params": [
+        {
+          "type": "Identifier",
+          "name": "args",
+          "range": [
+            70,
+            74
+          ]
+        }
+      ],
+      "defaults": [],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a",
+                  "range": [
+                    84,
+                    85
+                  ]
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 1,
+                  "raw": "1",
+                  "range": [
+                    88,
+                    89
+                  ]
+                },
+                "range": [
+                  84,
+                  89
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              80,
+              90
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "whiteVar",
+                  "range": [
+                    96,
+                    104
+                  ]
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
+                    "type": "Identifier",
+                    "name": "a",
+                    "range": [
+                      107,
+                      108
+                    ]
+                  },
+                  "right": {
+                    "type": "LogicalExpression",
+                    "operator": "||",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "args",
+                      "range": [
+                        112,
+                        116
+                      ]
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 0,
+                      "raw": "0",
+                      "range": [
+                        120,
+                        121
+                      ]
+                    },
+                    "range": [
+                      112,
+                      121
+                    ]
+                  },
+                  "range": [
+                    107,
+                    122
+                  ]
+                },
+                "range": [
+                  96,
+                  122
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              92,
+              123
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "obj1",
+                  "range": [
+                    130,
+                    134
+                  ]
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [],
+                  "range": [
+                    137,
+                    139
+                  ]
+                },
+                "range": [
+                  130,
+                  139
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              126,
+              140
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "obj1",
+                  "range": [
+                    142,
+                    146
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "whiteProperty",
+                  "range": [
+                    147,
+                    160
+                  ]
+                },
+                "range": [
+                  142,
+                  160
+                ]
+              },
+              "right": {
+                "type": "Literal",
+                "value": 10,
+                "raw": "10",
+                "range": [
+                  163,
+                  165
+                ]
+              },
+              "range": [
+                142,
+                165
+              ]
+            },
+            "range": [
+              142,
+              166
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "obj1",
+                  "range": [
+                    168,
+                    172
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "otherProperty",
+                  "range": [
+                    173,
+                    186
+                  ]
+                },
+                "range": [
+                  168,
+                  186
+                ]
+              },
+              "right": {
+                "type": "Literal",
+                "value": 20,
+                "raw": "20",
+                "range": [
+                  189,
+                  191
+                ]
+              },
+              "range": [
+                168,
+                191
+              ]
+            },
+            "range": [
+              168,
+              192
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "obj2",
+                  "range": [
+                    199,
+                    203
+                  ]
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "whiteProperty",
+                        "range": [
+                          210,
+                          223
+                        ]
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": 100,
+                        "raw": "100",
+                        "range": [
+                          225,
+                          228
+                        ]
+                      },
+                      "kind": "init",
+                      "range": [
+                        210,
+                        228
+                      ]
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "otherProperty",
+                        "raw": "\"otherProperty\"",
+                        "range": [
+                          232,
+                          247
+                        ]
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": 200,
+                        "raw": "200",
+                        "range": [
+                          249,
+                          252
+                        ]
+                      },
+                      "kind": "init",
+                      "range": [
+                        232,
+                        252
+                      ]
+                    }
+                  ],
+                  "range": [
+                    206,
+                    255
+                  ]
+                },
+                "range": [
+                  199,
+                  255
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              195,
+              256
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "key1",
+                  "range": [
+                    263,
+                    267
+                  ]
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "whiteProperty",
+                  "raw": "\"whiteProperty\"",
+                  "range": [
+                    270,
+                    285
+                  ]
+                },
+                "range": [
+                  263,
+                  285
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              259,
+              286
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "key2",
+                  "range": [
+                    292,
+                    296
+                  ]
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "otherProperty",
+                  "raw": "\"otherProperty\"",
+                  "range": [
+                    299,
+                    314
+                  ]
+                },
+                "range": [
+                  292,
+                  314
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              288,
+              315
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "sum",
+                  "range": [
+                    321,
+                    324
+                  ]
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "whiteVar",
+                          "range": [
+                            327,
+                            335
+                          ]
+                        },
+                        "right": {
+                          "type": "MemberExpression",
+                          "computed": true,
+                          "object": {
+                            "type": "Identifier",
+                            "name": "obj1",
+                            "range": [
+                              338,
+                              342
+                            ]
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "key1",
+                            "range": [
+                              343,
+                              347
+                            ]
+                          },
+                          "range": [
+                            338,
+                            348
+                          ]
+                        },
+                        "range": [
+                          327,
+                          348
+                        ]
+                      },
+                      "right": {
+                        "type": "MemberExpression",
+                        "computed": true,
+                        "object": {
+                          "type": "Identifier",
+                          "name": "obj1",
+                          "range": [
+                            351,
+                            355
+                          ]
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "name": "key2",
+                          "range": [
+                            356,
+                            360
+                          ]
+                        },
+                        "range": [
+                          351,
+                          361
+                        ]
+                      },
+                      "range": [
+                        327,
+                        361
+                      ]
+                    },
+                    "right": {
+                      "type": "MemberExpression",
+                      "computed": true,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "obj2",
+                        "range": [
+                          364,
+                          368
+                        ]
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "key1",
+                        "range": [
+                          369,
+                          373
+                        ]
+                      },
+                      "range": [
+                        364,
+                        374
+                      ]
+                    },
+                    "range": [
+                      327,
+                      374
+                    ]
+                  },
+                  "right": {
+                    "type": "MemberExpression",
+                    "computed": true,
+                    "object": {
+                      "type": "Identifier",
+                      "name": "obj2",
+                      "range": [
+                        377,
+                        381
+                      ]
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "name": "key2",
+                      "range": [
+                        382,
+                        386
+                      ]
+                    },
+                    "range": [
+                      377,
+                      387
+                    ]
+                  },
+                  "range": [
+                    327,
+                    387
+                  ]
+                },
+                "range": [
+                  321,
+                  387
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              317,
+              388
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console",
+                  "range": [
+                    391,
+                    398
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log",
+                  "range": [
+                    399,
+                    402
+                  ]
+                },
+                "range": [
+                  391,
+                  402
+                ]
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": "sum: ",
+                  "raw": "\"sum: \"",
+                  "range": [
+                    403,
+                    410
+                  ]
+                },
+                {
+                  "type": "Identifier",
+                  "name": "sum",
+                  "range": [
+                    412,
+                    415
+                  ]
+                }
+              ],
+              "range": [
+                391,
+                416
+              ]
+            },
+            "range": [
+              391,
+              417
+            ]
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "str",
+                  "range": [
+                    423,
+                    426
+                  ]
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "objects info: ",
+                  "raw": "\"objects info: \"",
+                  "range": [
+                    429,
+                    445
+                  ]
+                },
+                "range": [
+                  423,
+                  445
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              419,
+              446
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console",
+                  "range": [
+                    448,
+                    455
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log",
+                  "range": [
+                    456,
+                    459
+                  ]
+                },
+                "range": [
+                  448,
+                  459
+                ]
+              },
+              "arguments": [
+                {
+                  "type": "Identifier",
+                  "name": "str",
+                  "range": [
+                    460,
+                    463
+                  ]
+                },
+                {
+                  "type": "Literal",
+                  "value": "\n\t",
+                  "raw": "\"\\n\\t\"",
+                  "range": [
+                    465,
+                    471
+                  ]
+                },
+                {
+                  "type": "Identifier",
+                  "name": "obj1",
+                  "range": [
+                    473,
+                    477
+                  ]
+                },
+                {
+                  "type": "Literal",
+                  "value": "\n\t",
+                  "raw": "\"\\n\\t\"",
+                  "range": [
+                    479,
+                    485
+                  ]
+                },
+                {
+                  "type": "Identifier",
+                  "name": "obj2",
+                  "range": [
+                    487,
+                    491
+                  ]
+                }
+              ],
+              "range": [
+                448,
+                492
+              ]
+            },
+            "range": [
+              448,
+              493
+            ]
+          },
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "Identifier",
+              "name": "sum",
+              "range": [
+                503,
+                506
+              ]
+            },
+            "range": [
+              496,
+              507
+            ]
+          }
+        ],
+        "range": [
+          76,
+          510
+        ]
+      },
+      "rest": null,
+      "generator": false,
+      "expression": false,
+      "range": [
+        57,
+        510
+      ],
+      "leadingComments": [
+        {
+          "type": "Line",
+          "value": " run :      node ../src/obfuscate.js 1.config 1.ob.js",
+          "range": [
+            0,
+            55
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "test",
+        "range": [
+          521,
+          525
+        ]
+      },
+      "params": [],
+      "defaults": [],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "obj3",
+                  "range": [
+                    535,
+                    539
+                  ]
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [],
+                  "range": [
+                    542,
+                    544
+                  ]
+                },
+                "range": [
+                  535,
+                  544
+                ]
+              }
+            ],
+            "kind": "var",
+            "range": [
+              531,
+              545
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "obj3",
+                  "range": [
+                    547,
+                    551
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "whiteProperty",
+                  "range": [
+                    552,
+                    565
+                  ]
+                },
+                "range": [
+                  547,
+                  565
+                ]
+              },
+              "right": {
+                "type": "Literal",
+                "value": 10,
+                "raw": "10",
+                "range": [
+                  568,
+                  570
+                ]
+              },
+              "range": [
+                547,
+                570
+              ]
+            },
+            "range": [
+              547,
+              571
+            ]
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "obj3",
+                  "range": [
+                    573,
+                    577
+                  ]
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "otherProperty",
+                  "range": [
+                    578,
+                    591
+                  ]
+                },
+                "range": [
+                  573,
+                  591
+                ]
+              },
+              "right": {
+                "type": "Literal",
+                "value": 20,
+                "raw": "20",
+                "range": [
+                  594,
+                  596
+                ]
+              },
+              "range": [
+                573,
+                596
+              ]
+            },
+            "range": [
+              573,
+              597
+            ]
+          },
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "foo",
+                "range": [
+                  606,
+                  609
+                ]
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5",
+                  "range": [
+                    610,
+                    611
+                  ]
+                }
+              ],
+              "range": [
+                606,
+                612
+              ]
+            },
+            "range": [
+              599,
+              613
+            ]
+          }
+        ],
+        "range": [
+          528,
+          615
+        ]
+      },
+      "rest": null,
+      "generator": false,
+      "expression": false,
+      "range": [
+        512,
+        615
+      ]
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "Identifier",
+          "name": "test",
+          "range": [
+            617,
+            621
+          ]
+        },
+        "arguments": [],
+        "range": [
+          617,
+          623
+        ]
+      },
+      "range": [
+        617,
+        624
+      ]
+    },
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "test",
+            "range": [
+              630,
+              634
+            ]
+          },
+          "init": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "name": "fun",
+                  "range": [
+                    647,
+                    650
+                  ]
+                },
+                "value": {
+                  "type": "FunctionExpression",
+                  "id": null,
+                  "params": [],
+                  "defaults": [],
+                  "body": {
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                          {
+                            "type": "VariableDeclarator",
+                            "id": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "range": [
+                                696,
+                                697
+                              ]
+                            },
+                            "init": {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1",
+                              "range": [
+                                698,
+                                699
+                              ]
+                            },
+                            "range": [
+                              696,
+                              699
+                            ]
+                          }
+                        ],
+                        "kind": "var",
+                        "range": [
+                          692,
+                          701
+                        ],
+                        "leadingComments": [
+                          {
+                            "type": "Line",
+                            "value": " c2",
+                            "range": [
+                              666,
+                              671
+                            ]
+                          },
+                          {
+                            "type": "Block",
+                            "value": " aaa\n\t\tccc ",
+                            "range": [
+                              674,
+                              689
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "range": [
+                      662,
+                      702
+                    ]
+                  },
+                  "rest": null,
+                  "generator": false,
+                  "expression": false,
+                  "range": [
+                    652,
+                    702
+                  ]
+                },
+                "kind": "init",
+                "range": [
+                  647,
+                  702
+                ],
+                "leadingComments": [
+                  {
+                    "type": "Line",
+                    "value": " c1",
+                    "range": [
+                      640,
+                      645
+                    ]
+                  }
+                ]
+              }
+            ],
+            "range": [
+              637,
+              704
+            ]
+          },
+          "range": [
+            630,
+            704
+          ]
+        }
+      ],
+      "kind": "var",
+      "range": [
+        626,
+        704
+      ]
+    }
+  ],
+  "range": [
+    57,
+    704
+  ],
+  "comments": [
+    {
+      "type": "Line",
+      "value": " run :      node ../src/obfuscate.js 1.config 1.ob.js",
+      "range": [
+        0,
+        55
+      ]
+    },
+    {
+      "type": "Line",
+      "value": " c1",
+      "range": [
+        640,
+        645
+      ]
+    },
+    {
+      "type": "Line",
+      "value": " c2",
+      "range": [
+        666,
+        671
+      ]
+    },
+    {
+      "type": "Block",
+      "value": " aaa\n\t\tccc ",
+      "range": [
+        674,
+        689
+      ]
+    }
+  ]
+}

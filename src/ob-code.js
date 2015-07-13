@@ -72,7 +72,12 @@ var esprima = require("esprima"),
             var found = false;
 
             if (key == "property" && !parentNode.computed) {
-                Hanlder._addProperty(node.name, node);
+                if (node.type == Syntax.Literal) {
+                    // Hanlder._addProperty(node.value, node);
+                    Hanlder._addProperty(node.raw, node, "property");
+                } else {
+                    Hanlder._addProperty(node.name, node, "property");
+                }
                 return false;
             }
 
@@ -103,11 +108,13 @@ var esprima = require("esprima"),
             var computed = node.computed;
             if (computed) { // obj[key]
                 if (property.type == Syntax.Literal) {
-                    Hanlder._addProperty(property.value, property);
+                    // Hanlder._addProperty(property.value, property);
+                    Hanlder._addProperty(property.raw, property, "MemberExpression");
                 }
             } else { // obj.key
                 if (property.type == Syntax.Identifier) {
-                    Hanlder._addProperty(property.name, property);
+                    property.nodeType = "MemberExpression";
+                    Hanlder._addProperty(property.name, property, "MemberExpression");
                 }
             }
         },
@@ -124,10 +131,11 @@ var esprima = require("esprima"),
         Property: function(node, computed) {
             var self = this;
             var property = node.key;
-            if (property.type == Syntax.Identifier) {
-                Hanlder._addProperty(property.name, property);
-            } else if (property.type == Syntax.Literal) {
-                Hanlder._addProperty(property.value, property);
+            if (property.type == Syntax.Literal) {
+                // Hanlder._addProperty(property.value, property);
+                Hanlder._addProperty(property.raw, property, "Property");
+            } else if (property.type == Syntax.Identifier) {
+                Hanlder._addProperty(property.name, property, "Property");
             }
         },
 
@@ -138,12 +146,14 @@ var esprima = require("esprima"),
         },
 
 
-        _addProperty: function(pname, property) {
-            if (typeof pname == "string") {
-                if (!Array.isArray(Properties[pname])) {
-                    Properties[pname] = [];
+        _addProperty: function(nodeKey, property, nodeType) {
+            if (typeof nodeKey == "string") {
+                if (!Array.isArray(Properties[nodeKey])) {
+                    Properties[nodeKey] = [];
                 }
-                var list = Properties[pname];
+                property.nodeKey = nodeKey;
+                var list = Properties[nodeKey];
+                nodeType && (property.nodeType = nodeType);
                 list.push(property)
             }
         }
@@ -276,12 +286,23 @@ var esprima = require("esprima"),
             }
         },
 
-        obfuscate: function(cache) {
-            this.obfuscateSelf(cache);
-            this.obfuscateChildren(cache);
+        obfuscate: function(cache, blackOnly) {
+            if (cache === true || cache === false) {
+                blackOnly = cache;
+                cache = null;
+                console.log("==================================")
+            }
+            cache = cache || Object.create(null);
+            this.obfuscateSelf(cache, blackOnly);
+            this.obfuscateChildren(cache, blackOnly);
         },
 
-        obfuscateSelf: function(cache) {
+        obfuscateSelf: function(cache, blackOnly) {
+            if (cache === true || cache === false) {
+                blackOnly = cache;
+                cache = null;
+                console.log("==================================")
+            }
             cache = cache || Object.create(null);
             for (var key in this.usedIdentifier) {
                 cache[key] = true;
@@ -296,6 +317,26 @@ var esprima = require("esprima"),
             var paramKeys = Object.keys(this.parameters || Object.create(null));
 
             var reserved = Object.create(null);
+
+            if (blackOnly) {
+                paramKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+                varKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+                funcKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+            }
+
+            for (var p in Config.blackListV) {
+                delete reserved[p];
+            }
+            for (var p in Config.blackList) {
+                delete reserved[p];
+            }
+
             for (var p in Reserved.keyword) {
                 reserved[p] = true;
             }
@@ -320,12 +361,7 @@ var esprima = require("esprima"),
             for (var p in Config.whiteList) {
                 reserved[p] = true;
             }
-            for (var p in Config.blackListV) {
-                delete reserved[p];
-            }
-            for (var p in Config.blackList) {
-                delete reserved[p];
-            }
+
 
             var allKeys = [];
             paramKeys.forEach(function(k) {
@@ -370,7 +406,7 @@ var esprima = require("esprima"),
             }
 
             var newNames = util.getRandomNames(allKeys.length, cache, reserved);
-            var Me = this;
+
             allKeys.forEach(function(a, idx) {
                 var k = a.key;
                 var n = Config.varMapping[k];
@@ -388,17 +424,19 @@ var esprima = require("esprima"),
                 } else if (type == "parameters") {
                     self.changeParamName(k, n);
                 }
-                if (Me.isGlobal) {
+                if (self.isGlobal) {
                     GlobalMapping[k] = n;
                 }
             });
         },
 
-        obfuscateChildren: function(cache) {
+        obfuscateChildren: function(cache, blackOnly) {
             this.childScopes.forEach(function(child) {
                 var _cache = Object.create(null);
-                util.merger(_cache, cache);
-                child.obfuscate(_cache);
+                if (cache && cache !== true) {
+                    util.merger(_cache, cache);
+                }
+                child.obfuscate(_cache, blackOnly);
             });
         },
 
@@ -512,14 +550,15 @@ var esprima = require("esprima"),
         },
 
         obfuscateTop: function() {
+            // TODO
             var variables = this.variables;
             for (var key in variables) {
                 console.log(key, variables[key]);
             }
         },
 
-        // TODO
         obfuscateString: function(strings) {
+            // TODO
             var literalKeys = Object.keys(strings);
             var self = this;
             var cache = Object.create(null);
@@ -542,7 +581,7 @@ var esprima = require("esprima"),
             return StringMapping;
         },
 
-        obfuscateProperties: function(properties) {
+        obfuscateProperties: function(properties, blackOnly) {
             var properKeys = Object.keys(properties);
             var self = this;
             var count = properKeys.length;
@@ -553,12 +592,28 @@ var esprima = require("esprima"),
             }
 
             var reservedProperties = Object.create(null);
-
             var reserved = Object.create(null);
+
+            if (blackOnly) {
+                properKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+            }
+
+            for (var p in Config.blackListP) {
+                delete reserved[p];
+            }
+            for (var p in Config.blackList) {
+                delete reserved[p];
+            }
+
             for (var p in Reserved.keyword) {
                 reserved[p] = true;
             }
             for (var p in Reserved.global) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.node) {
                 reserved[p] = true;
             }
             for (var p in Reserved.property) {
@@ -579,12 +634,7 @@ var esprima = require("esprima"),
             for (var p in Config.whiteList) {
                 reserved[p] = true;
             }
-            for (var p in Config.blackListP) {
-                delete reserved[p];
-            }
-            for (var p in Config.blackList) {
-                delete reserved[p];
-            }
+
 
             // properKeys.sort(function(a, b) {
             //     var _a = properties[a].length;
@@ -609,6 +659,113 @@ var esprima = require("esprima"),
 
 
             return reservedProperties;
+        },
+
+        getObfuscateVariables: function(variables, blackOnly) {
+            var varKeys = Object.keys(variables);
+
+            var reserved = Object.create(null);
+
+            if (blackOnly) {
+                varKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+            }
+            for (var p in Config.blackListV) {
+                delete reserved[p];
+            }
+            for (var p in Config.blackList) {
+                delete reserved[p];
+            }
+
+            for (var p in Reserved.keyword) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.global) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.node) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.domClass) {
+                reserved[p] = true;
+            }
+            for (var p in Config.reservedListV) {
+                reserved[p] = true;
+            }
+            for (var p in Config.reservedList) {
+                reserved[p] = true;
+            }
+            for (var p in Config.whiteListV) {
+                reserved[p] = true;
+            }
+            for (var p in Config.whiteList) {
+                reserved[p] = true;
+            }
+
+            var variablesOut = [];
+            varKeys.forEach(function(k) {
+                if (!reserved[k]) {
+                    var varInfo = variables[k][0];
+                    variablesOut.push(varInfo)
+                }
+            });
+            return variablesOut;
+        },
+
+        getObfuscateProperties: function(properties, blackOnly) {
+            var properKeys = Object.keys(properties);
+            var reserved = Object.create(null);
+
+            if (blackOnly) {
+                properKeys.forEach(function(k) {
+                    reserved[k] = true;
+                });
+            }
+            for (var p in Config.blackListP) {
+                delete reserved[p];
+            }
+            for (var p in Config.blackList) {
+                delete reserved[p];
+            }
+
+            for (var p in Reserved.keyword) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.global) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.node) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.property) {
+                reserved[p] = true;
+            }
+            for (var p in Reserved.dom) {
+                reserved[p] = true;
+            }
+            for (var p in Config.reservedListP) {
+                reserved[p] = true;
+            }
+            for (var p in Config.reservedList) {
+                reserved[p] = true;
+            }
+            for (var p in Config.whiteListP) {
+                reserved[p] = true;
+            }
+            for (var p in Config.whiteList) {
+                reserved[p] = true;
+            }
+
+            var propertiesOut = [];
+            properKeys.forEach(function(k) {
+                if (!reserved[k]) {
+                    var properInfo = properties[k][0];
+                    propertiesOut.push(properInfo);
+                }
+            });
+
+            return propertiesOut;
         },
 
         changePropertyName: function(properties, oldName, newName) {

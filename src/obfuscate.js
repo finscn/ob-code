@@ -29,7 +29,8 @@ if (argv.length == 0) {
 var GlobalConfig = {
     protectGlobal: false,
     protectPropery: false,
-    createMapping: false
+    createMapping: false,
+    blackOnly: false,
 };
 var indent = '';
 var comment = false;
@@ -68,13 +69,52 @@ function start() {
 
     var globalScope = new ob.GlobalScope(result, config);
 
-    if (!GlobalConfig.protectGlobal) {
-        globalScope.obfuscateSelf();
+    console.log("\n");
+    console.log("###############################");
+    console.log("###############################");
+    console.log("[BLACK-LIST:VAR]");
+    var allVariables = globalScope.getObfuscateVariables(globalScope.variables, GlobalConfig.blackOnly);
+    allVariables.sort(function(a,b){
+        return a.name<b.name?-1:1;
+    });
+    allVariables.forEach(function(v) {
+        var name = v.name;
+        if (name[0] === name[0].toUpperCase()) {
+            console.log(name);
+        }
+    });
+    console.log("\n");
+    console.log("###############################");
+    console.log("[BLACK-LIST:PROPERTY]");
+    var allProperties = globalScope.getObfuscateProperties(ob.Properties, GlobalConfig.blackOnly);
+    allProperties.sort(function(a,b){
+        return a.nodeKey<b.nodeKey?-1:1;
+    });
+    allProperties.forEach(function(p) {
+        var nodeKey = p.nodeKey;
+        if (!nodeKey){
+            return;
+        }
+        if (nodeKey[0] == '"' || nodeKey.length < 6) {
+            return;
+        }
+        if (nodeKey.indexOf("set") === 0 || nodeKey.indexOf("get") === 0 || nodeKey.indexOf("init") === 0 || nodeKey.indexOf("update") === 0) {
+            console.log(nodeKey)
+        }
+    });
+    console.log("\n");
+    console.log("###############################");
+    console.log("###############################");
+
+
+    if (!GlobalConfig.protectGlobal || GlobalConfig.blackOnly) {
+        globalScope.obfuscateSelf(GlobalConfig.blackOnly);
     }
 
-    globalScope.obfuscateChildren();
-    if (!GlobalConfig.protectPropery) {
-        globalScope.obfuscateProperties(ob.Properties);
+    globalScope.obfuscateChildren(GlobalConfig.blackOnly);
+
+    if (!GlobalConfig.protectPropery || GlobalConfig.blackOnly) {
+        globalScope.obfuscateProperties(ob.Properties, GlobalConfig.blackOnly);
     }
     // if (!protectString) {
     //     var literals = globalScope.findStringLiteral(result);
@@ -119,7 +159,7 @@ function start() {
         var rs = writeFile(config.baseDir + "/" + outFile + ".mapping", mapping.join("\n"), encoding);
     }
 
-    console.log("****************************** OVER ******************************")
+    console.log("**************** OVER ( " + (new Date()) + " ) ****************")
 }
 
 
@@ -451,6 +491,7 @@ function parseConfigFile(filePath, encoding) {
     config.reservedList = Object.create(null);
     config.reservedListV = Object.create(null);
     config.reservedListP = Object.create(null);
+    config.replaceString = Object.create(null);
 
     config.varMapping = Object.create(null);
     config.propertyMapping = Object.create(null);
@@ -530,6 +571,9 @@ function parseConfigFile(filePath, encoding) {
             } else if (line == "[RESERVED:PROPERTY]") {
                 current = "reservedListP";
 
+            } else if (line == "[REPLACE]") {
+                current = "replaceString";
+
             } else if (line) {
 
                 if (current == "jsFile") {
@@ -595,7 +639,8 @@ function parseConfigFile(filePath, encoding) {
                     var cfgName = lines[0].trim();
                     var cfgValue = lines[1].trim();
                     GlobalConfig[cfgName] = parseValue(cfgValue);
-                } else if (current == "varMapping" || current == "propertyMapping" || current == "constList") {
+                    console.log(cfgName, cfgValue)
+                } else if (current == "varMapping" || current == "propertyMapping" || current == "constList" || current == "replaceString") {
                     config[current] = config[current] || {};
                     var lines = line.split("=");
                     var oname = lines[0].trim();
@@ -650,25 +695,26 @@ function parseJavaScript(code, comment) {
 }
 
 function parseValue(v) {
-        if (v === "true") {
-            v = true;
-        } else if (v === "false") {
-            v = false;
-        } else if (v === "null") {
-            v = null;
-        } else if (!isNaN(Number(v))) {
-            v = Number(v);
-        } else {
-            v = String(v);
-        }
-        return v;
+    if (v === "true") {
+        v = true;
+    } else if (v === "false") {
+        v = false;
+    } else if (v === "null") {
+        v = null;
+    } else if (!isNaN(Number(v))) {
+        v = Number(v);
+    } else {
+        v = String(v);
     }
-    ///////////////////////////////////////
-    ///////////////////////////////////////
-    ///////////////////////////////////////
-    ///////////////////////////////////////
-    ///////////////////////////////////////
-    ///////////////////////////////////////
+    return v;
+}
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
 
 
 var Utils = Utils || {};
