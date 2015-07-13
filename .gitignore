@@ -1,4 +1,5 @@
 .DS_Store
+**/.DS_Store
 # Ignoring App folder for
 # ease of implementation
 /_*/
